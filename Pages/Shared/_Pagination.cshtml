@@ -1,0 +1,44 @@
+@using PlantsInformationWeb.Utils
+@model IPaginatedList
+@{
+    var routeName = ViewData?["RouteName"]?.ToString() ?? "";
+    var search = ViewContext.HttpContext.Request.Query["search"].ToString();
+}
+
+<!-- Pagination -->
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-page="@routeName" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-search="@search">Trước</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Trước</span>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" asp-page="@routeName" asp-route-pageIndex="@i" asp-route-search="@search">@i</a>
+            </li>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-page="@routeName" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-search="@search">Sau</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Sau</span>
+            </li>
+        }
+    </ul>
+</nav>

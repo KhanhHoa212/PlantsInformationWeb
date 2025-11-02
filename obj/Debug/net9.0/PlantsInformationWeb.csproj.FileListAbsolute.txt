@@ -1,0 +1,9 @@
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.csproj.AssemblyReference.cache
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\rpswa.dswa.cache.json
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.AssemblyInfoInputs.cache
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.AssemblyInfo.cs
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.csproj.CoreCompileInputs.cache
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.MvcApplicationPartsAssemblyInfo.cache
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.RazorAssemblyInfo.cache
+c:\Users\ASUS\OneDrive\Máy tính\Workspace\Theory\Fall2025\PLantsInformationWeb\obj\Debug\net9.0\PlantsInformationWeb.RazorAssemblyInfo.cs

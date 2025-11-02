@@ -1,0 +1,172 @@
+@page
+@model PlantsInformationWeb.Pages.Admin.DiseasesManagement
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "admin")]
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Diseases Management";
+}
+
+<!-- Diseases Management Section -->
+<div id="diseases-section" class="content-section">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-success">Diseases Management</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal"
+                data-bs-target="#addDiseasesModal">
+                <i class="bi bi-plus-circle me-1"></i>Add Diseases
+            </button>
+        </div>
+    </div>
+
+    <!-- Disease Filters -->
+    <form method="get" class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" name="search" id="diseaseSearch" value="@Request.Query["search"]" class="form-control" placeholder="Search disease..." />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success">Search</button>
+        </div>
+    </form>
+
+    <!-- Diseases Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="diseasesTable">
+                    <thead>
+                        <tr>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Disease ID</th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Disease Name</th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Symptoms</th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Solution</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var disease in Model.Diseases)
+                        {
+                            <tr>
+                                <td>@disease.DiseaseId</td>
+                                <td>@disease.DiseaseName</td>
+                                <td>@disease.Symptoms</td>
+                                <td>
+                                    <me><span class="badge bg-success">@disease.Solution</span></me>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editDiseaseModal" data-disease-id="@disease.DiseaseId"
+                                        data-disease-name="@disease.DiseaseName" data-symptoms="@disease.Symptoms"
+                                        data-solution="@disease.Solution" title="Edit Disease">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                    <form method="post" asp-page-handler="DeleteDisease"
+                                        asp-route-id="@disease.DiseaseId" class="d-inline"
+                                        onsubmit="return confirm('Are you sure you want to delete this disease?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Disease">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @await Html.PartialAsync("_Pagination", Model.Diseases, new ViewDataDictionary(ViewData) {
+                    { "RouteName", "/Admin/DiseasesManagement" }
+                })
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Disease Modal -->
+<div class="modal fade" id="addDiseasesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="AddDisease">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Disease</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Disease Name</label>
+                        <input type="text" class="form-control" asp-for="NewDisease.DiseaseName" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Symptoms</label>
+                        <textarea class="form-control" asp-for="NewDisease.Symptoms" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Solution</label>
+                        <textarea class="form-control" asp-for="NewDisease.Solution" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Disease</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Disease Modal -->
+<div class="modal fade" id="editDiseaseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="EditDisease">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Disease</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" asp-for="EditDisease.DiseaseId" id="editDiseaseId" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Disease Name</label>
+                        <input type="text" class="form-control" asp-for="EditDisease.DiseaseName" id="editDiseaseName"
+                            required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Symptoms</label>
+                        <textarea class="form-control" asp-for="EditDisease.Symptoms" id="editSymptoms" rows="3"
+                            required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Solution</label>
+                        <textarea class="form-control" asp-for="EditDisease.Solution" id="editSolution" rows="3"
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const editDiseaseModal = document.getElementById('editDiseaseModal');
+    editDiseaseModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        document.getElementById('editDiseaseId').value = button.getAttribute('data-disease-id');
+        document.getElementById('e                      ditDiseaseName').value = button.getAttribute('data-disease-name');
+        document.getElementById('editSymptoms').value = button.getAttribute('data-symptoms');
+        document.getElementById('editSolution').value = button.getAttribute('data-solution');
+    });
+</script>

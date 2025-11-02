@@ -1,0 +1,183 @@
+@page
+@model PlantsInformationWeb.Pages.Admin.UserManagement
+    @using Microsoft.AspNetCore.Authorization
+    @attribute [Authorize(Roles = "admin")]
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "User Management";
+}
+
+<!-- User Management Section -->
+<div id="users-section" class="content-section">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-success">User Management</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal"
+                data-bs-target="#addUserModal">
+                <i class="bi bi-plus-circle me-1"></i>Add User
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <form method="get" class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" name="search" id="userSearch" value="@Request.Query["search"]"
+                class="form-control" placeholder="Search users..." />
+        </div>
+        <div class="col-md-3">
+            @{
+                var role = Request.Query["role"].ToString();
+            }
+            <select name="role" class="form-select" id="roleFilter">
+                <option value="">All Roles</option>
+                @if (role == "admin")
+                {
+                    <option value="admin" selected>Admin</option>
+                }
+                else
+                {
+                    <option value="admin">Admin</option>
+                }
+                @if (role == "user")
+                {
+                    <option value="user" selected>User</option>
+                }
+                else
+                {
+                    <option value="user">User</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            @{
+                var status = Request.Query["status"].ToString();
+            }
+            <select name="status" class="form-select" id="statusFilter">
+                <option value="">All Status</option>
+                @if (status == "active")
+                {
+                    <option value="active" selected>Active</option>
+                }
+                else
+                {
+                    <option value="active">Active</option>
+                }
+                @if (status == "inactive")
+                {
+                    <option value="inactive" selected>Inactive</option>
+                }
+                else
+                {
+                    <option value="inactive">Inactive</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success">Search</button>
+        </div>
+    </form>
+
+    <!-- Users Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th data-bs-toggle="tooltip" title="Click to sort">UserName <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Email <i class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Role <i class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Status <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th data-bs-toggle="tooltip" title="Click to sort">Created at <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>@user.Username</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <span class="badge @(user.Role == "admin" ? "bg-danger" : "bg-primary")">
+                                        @user.Role
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @(user.Isactive == true ? "bg-success" : "bg-secondary")">
+                                        @(user.Isactive == true ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>@user.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="ToggleActive" asp-route-id="@user.UserId"
+                                        class="d-inline"
+                                        onsubmit="return confirm('@(user.Isactive == true ? "Are you sure you want to lock this account?" : "Are you sure you want to unlock this account?")');">
+                                        <button type="submit"
+                                            class="btn btn-sm @(user.Isactive == true ? "btn-outline-warning" : "btn-outline-success")"
+                                            title="@(user.Isactive == true ? "Lock account" : "Unlock account")">
+                                            <i class="bi @(user.Isactive == true ? "bi-lock" : "bi-unlock")"></i>
+                                            @(user.Isactive == true ? "Lock" : "Unlock")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @await Html.PartialAsync("_Pagination", Model.Users, new ViewDataDictionary(ViewData) {
+                { "RouteName", "/Admin/UserManagement" }
+                                })
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="AddUser">
+                    <div class="mb-3">
+                        <label class="form-label">User Name</label>
+                        <input type="text" class="form-control" name="NewUser.Username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="NewUser.Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select class="form-select" name="NewUser.Role" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="NewUser.Password" required>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Add User</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
