@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PlantsInformationWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e3337689c246079c122c0fcc6a5bfd915121498")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf43d14526d52e7ca2da8372d00e000e38a1c7e2")]
 [assembly: System.Reflection.AssemblyProductAttribute("PlantsInformationWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PlantsInformationWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
