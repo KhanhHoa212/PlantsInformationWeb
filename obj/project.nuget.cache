@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1XFYts3HZbk=",
+  "dgSpecHash": "dSqzLRsjpVw=",
   "success": true,
-  "projectFilePath": "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
+  "projectFilePath": "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
@@ -193,9 +193,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "PlantsInformationWeb depends on Npgsql.EntityFrameworkCore.PostgreSQL (>= 8.0.3) but Npgsql.EntityFrameworkCore.PostgreSQL 8.0.3 was not found. Npgsql.EntityFrameworkCore.PostgreSQL 8.0.4 was resolved instead.",
-      "projectPath": "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
+      "projectPath": "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
+      "filePath": "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
       "libraryId": "Npgsql.EntityFrameworkCore.PostgreSQL",
       "targetGraphs": [
         "net8.0"

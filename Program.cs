@@ -1,7 +1,4 @@
-using PlantsInformationWeb.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using PlantsInformationWeb.Pages.Account;
-using PlantsInformationWeb.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,21 +7,8 @@ builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
 builder.Services.AddSession();
 
 
-// // Đăng ký DbContext với PostgreSQL
-// builder.Services.AddDbContext<PlantsInformationContext>(options =>
-//     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-
-
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPlantRepository, PlantRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
-
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<PlantService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Cookie Auth
