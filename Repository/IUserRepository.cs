@@ -1,3 +1,4 @@
+using PlantsInformationWeb.DTOs;
 using PlantsInformationWeb.Models;
 
 namespace PlantsInformationWeb.Repository
@@ -20,16 +21,21 @@ namespace PlantsInformationWeb.Repository
         Task<bool> VerifyOtpAsync(int userId, string otp);
 
         // Cập nhật mật khẩu mới
-        // Task UpdatePasswordAsync(int userId, string newPassword);
+        Task UpdatePasswordAsync(int userId, string newPassword);
 
         //  Đánh dấu OTP đã dùng hoặc xoá
         Task InvalidateOtpAsync(int userId);
 
         // Kiểm tra pass cũ khi đổi pass sau khi đăng nhập
         Task<bool> VerifyCurrentPasswordAsync(int userId, string currentPassword);
-        
+
         // Thêm user mới
         Task AddUserAsync(User user);
+
+        // Task<int[]> GetUserCreateByMonthAsync(int year);
+
+        Task<(string[] Labels, int[] Data)> GetUserCreateByMonthAsync(DateTime startDate, DateTime endDate);
+        Task<List<UserDto>> GetUserRegistrationsByMonthAsync(DateTime? startDate, DateTime? endDate);
     }
 }
     

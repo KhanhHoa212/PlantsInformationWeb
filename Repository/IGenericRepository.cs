@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using PlantsInformationWeb.Models;
 
@@ -15,7 +16,8 @@ namespace PlantsInformationWeb.Repository
         Task DeleteAsync(object id);
         Task<List<T>> GetAllByIdAsync(IEnumerable<int> ids);
         IQueryable<T> GetQueryable();
-
+        IQueryable<T> GetQueryableWithIncludes(params Expression<Func<T, object>>[] includes);
+        Task<int> GetCountAsync(Expression<Func<T, bool>>? predicate = null);
 
     }
 }

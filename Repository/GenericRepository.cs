@@ -71,5 +71,21 @@ namespace PlantsInformationWeb.Repository
         }
 
 
+        public async Task<int> GetCountAsync(Expression<Func<T, bool>>? predicate = null)
+        {
+            if (predicate == null) return await _dbSet.CountAsync();
+            return await _dbSet.CountAsync(predicate);
+
+        }
+
+        public IQueryable<T> GetQueryableWithIncludes(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return query;
+        }
     }
 }

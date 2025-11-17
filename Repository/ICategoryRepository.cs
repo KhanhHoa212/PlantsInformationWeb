@@ -6,8 +6,9 @@ namespace PlantsInformationWeb.Repository
     public interface ICategoryRepository
     {
         Task<int> GetCountAllCategoryAsync();
+        Task<List<CategoryWithCountDto>> GetCategoriesWithPlantCountAsync(DateTime? startDate, DateTime? endDate);
+        Task<List<CategoryDto>> GetPlantDistributionByCategoryAsync(DateTime? startDate, DateTime? endDate);
 
-        Task<List<CategoryWithCountDto>> GetCategoriesWithPlantCountAsync();
-        // Task AddAsync(Plantcategory category);
+        Task<CategoryDto> GetTop1CategoryAsync();
     }
 }
