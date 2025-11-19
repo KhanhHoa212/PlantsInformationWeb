@@ -14,21 +14,12 @@
     <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\8.0.5\buildTransitive\net8.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\8.0.5\buildTransitive\net8.0\Microsoft.EntityFrameworkCore.props')" />
-    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore.design\8.0.5\build\net8.0\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore.design\8.0.5\build\net8.0\Microsoft.EntityFrameworkCore.Design.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\7.0.16\buildTransitive\net6.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\7.0.16\buildTransitive\net6.0\Microsoft.EntityFrameworkCore.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore.design\7.0.16\build\net6.0\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore.design\7.0.16\build\net6.0\Microsoft.EntityFrameworkCore.Design.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codeanalysis.analyzers\3.3.3\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.codeanalysis.analyzers\3.3.3\build\Microsoft.CodeAnalysis.Analyzers.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgMicrosoft_EntityFrameworkCore_Tools Condition=" '$(PkgMicrosoft_EntityFrameworkCore_Tools)' == '' ">C:\Users\ASUS\.nuget\packages\microsoft.entityframeworkcore.tools\7.0.16</PkgMicrosoft_EntityFrameworkCore_Tools>
     <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">C:\Users\ASUS\.nuget\packages\microsoft.codeanalysis.analyzers\3.3.3</PkgMicrosoft_CodeAnalysis_Analyzers>
-    <PkgMicrosoft_EntityFrameworkCore_Tools Condition=" '$(PkgMicrosoft_EntityFrameworkCore_Tools)' == '' ">C:\Users\ASUS\.nuget\packages\microsoft.entityframeworkcore.tools\8.0.5</PkgMicrosoft_EntityFrameworkCore_Tools>
-    <PkgMESCIUS_ActiveReports_SpreadBuilder Condition=" '$(PkgMESCIUS_ActiveReports_SpreadBuilder)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.spreadbuilder\3.0.1</PkgMESCIUS_ActiveReports_SpreadBuilder>
-    <PkgMESCIUS_ActiveReports_Core_ReportItems_Chart Condition=" '$(PkgMESCIUS_ActiveReports_Core_ReportItems_Chart)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.core.reportitems.chart\1.1.0</PkgMESCIUS_ActiveReports_Core_ReportItems_Chart>
-    <PkgMESCIUS_ActiveReports_Core_DataProviders Condition=" '$(PkgMESCIUS_ActiveReports_Core_DataProviders)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.core.dataproviders\4.0.1</PkgMESCIUS_ActiveReports_Core_DataProviders>
-    <PkgMESCIUS_ActiveReports Condition=" '$(PkgMESCIUS_ActiveReports)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports\19.1.1</PkgMESCIUS_ActiveReports>
-    <PkgMESCIUS_ActiveReports_Export_Xml Condition=" '$(PkgMESCIUS_ActiveReports_Export_Xml)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.export.xml\19.1.1</PkgMESCIUS_ActiveReports_Export_Xml>
-    <PkgMESCIUS_ActiveReports_Export_Word Condition=" '$(PkgMESCIUS_ActiveReports_Export_Word)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.export.word\19.1.1</PkgMESCIUS_ActiveReports_Export_Word>
-    <PkgMESCIUS_ActiveReports_Export_Pdf Condition=" '$(PkgMESCIUS_ActiveReports_Export_Pdf)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.export.pdf\19.1.1</PkgMESCIUS_ActiveReports_Export_Pdf>
-    <PkgMESCIUS_ActiveReports_Export_Image Condition=" '$(PkgMESCIUS_ActiveReports_Export_Image)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.export.image\19.1.1</PkgMESCIUS_ActiveReports_Export_Image>
-    <PkgMESCIUS_ActiveReports_Export_Html Condition=" '$(PkgMESCIUS_ActiveReports_Export_Html)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.export.html\19.1.1</PkgMESCIUS_ActiveReports_Export_Html>
-    <PkgMESCIUS_ActiveReports_Export_Excel Condition=" '$(PkgMESCIUS_ActiveReports_Export_Excel)' == '' ">C:\Users\ASUS\.nuget\packages\mescius.activereports.export.excel\19.1.1</PkgMESCIUS_ActiveReports_Export_Excel>
   </PropertyGroup>
 </Project>

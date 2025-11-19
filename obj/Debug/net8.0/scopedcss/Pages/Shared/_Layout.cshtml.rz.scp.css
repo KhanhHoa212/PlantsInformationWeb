@@ -1,0 +1,71 @@
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-ixdw4no7hi] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-ixdw4no7hi] {
+  color: #0077cc;
+}
+
+.btn-primary[b-ixdw4no7hi] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-ixdw4no7hi], .nav-pills .show > .nav-link[b-ixdw4no7hi] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-ixdw4no7hi] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-ixdw4no7hi] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-ixdw4no7hi] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-ixdw4no7hi] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-ixdw4no7hi] {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+.navbar[b-ixdw4no7hi] {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 14px;
+}
+.navbar-brand[b-ixdw4no7hi] {
+  font-weight: bold;
+  font-size: 16px;
+}
+.nav-link[b-ixdw4no7hi] {
+  padding: 0.25rem 0.75rem;
+  font-size: 14px;
+}
+main[b-ixdw4no7hi] {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.py-5[b-ixdw4no7hi] {
+    padding-top: 2rem !important;
+    padding-bottom: 1rem !important;
+}

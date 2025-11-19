@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PlantsInformationWeb.Models;
 
-namespace PLantsInformationWeb.Repository
+namespace PlantsInformationWeb.Repository
 {
-    public class ChatRepository
+    public class ChatRepository : IChatRepository
     {
-        
+       
     }
 }

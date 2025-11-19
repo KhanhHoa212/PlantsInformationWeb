@@ -29,5 +29,5 @@ public partial class Plantcomment
 
     public virtual Plant Plant { get; set; } = null!;
 
-    public virtual User? User { get; set; }
+    public virtual User? User {get; set;}
 }

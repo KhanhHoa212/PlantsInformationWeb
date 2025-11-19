@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PlantsInformationWeb.DTOs;
-using PlantsInformationWeb.Pages.Admin;
+// using PlantsInformationWeb.Pages.Admin;
 
 namespace PlantsInformationWeb.Pages
 {
@@ -20,10 +20,10 @@ namespace PlantsInformationWeb.Pages
             _plantService = plantService;
         }
 
-        public async Task OnGetAsync()
-        {
-            PlantsInfor = await _plantService.GetPlantsAsync();
-        }
+        // public async Task OnGetAsync()
+        // {
+        //     PlantsInfor = await _plantService.GetPlantsAsync();
+        // }
 
     }
 }

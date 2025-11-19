@@ -22,6 +22,4 @@ public partial class Notification
     public virtual Plantcomment? Comment { get; set; }
 
     public virtual Plant? Plant { get; set; }
-
-    public virtual User? User { get; set; }
 }

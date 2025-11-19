@@ -63,23 +63,39 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
-            "Mescius.ActiveReports.AspNetCore.Viewer": {
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",
-              "version": "[19.1.1, )"
+              "version": "[8.0.8, )"
             },
-            "Mescius.ActiveReports.Export.Pdf": {
+            "Microsoft.AspNetCore.SignalR": {
               "target": "Package",
-              "version": "[19.1.1, )"
+              "version": "[1.2.0, )"
+            },
+            "Microsoft.CodeAnalysis.CSharp": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            },
+            "Microsoft.CodeAnalysis.Common": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.16, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.5, )"
+              "version": "[7.0.16, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[8.0.3, )"
+              "version": "[7.0.11, )"
+            },
+            "OpenAI": {
+              "target": "Package",
+              "version": "[2.5.0, )"
             },
             "QuestPDF": {
               "target": "Package",

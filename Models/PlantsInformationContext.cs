@@ -23,6 +23,8 @@ public partial class PlantsInformationContext : DbContext
 
     public virtual DbSet<Disease> Diseases { get; set; }
 
+    public virtual DbSet<Favoriteplant> Favoriteplants { get; set; }
+
     public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<Nutritionalvalue> Nutritionalvalues { get; set; }
@@ -60,7 +62,7 @@ public partial class PlantsInformationContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Database=PlantsInformation;Username=postgres;Password=123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -87,11 +89,6 @@ public partial class PlantsInformationContext : DbContext
                 .HasForeignKey(d => d.SessionId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("chatmessage_session_id_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Chatmessages)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("chatmessage_user_id_fkey");
         });
 
         modelBuilder.Entity<Chatsession>(entity =>
@@ -109,11 +106,6 @@ public partial class PlantsInformationContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("started_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Chatsessions)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("chatsession_user_id_fkey");
         });
 
         modelBuilder.Entity<Climate>(entity =>
@@ -168,6 +160,26 @@ public partial class PlantsInformationContext : DbContext
                 .HasColumnName("updated_at");
         });
 
+        modelBuilder.Entity<Favoriteplant>(entity =>
+        {
+            entity.HasKey(e => e.FavoriteId).HasName("favoriteplant_pkey");
+
+            entity.ToTable("favoriteplant");
+
+            entity.Property(e => e.FavoriteId).HasColumnName("favorite_id");
+            entity.Property(e => e.FavoritedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("favorited_at");
+            entity.Property(e => e.PlantId).HasColumnName("plant_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Plant).WithMany(p => p.Favoriteplants)
+                .HasForeignKey(d => d.PlantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("favoriteplant_plant_id_fkey");
+        });
+
         modelBuilder.Entity<Notification>(entity =>
         {
             entity.HasKey(e => e.NotificationId).HasName("notification_pkey");
@@ -181,7 +193,7 @@ public partial class PlantsInformationContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.IsRead)
-                .HasDefaultValue(false)
+                .HasDefaultValueSql("false")
                 .HasColumnName("is_read");
             entity.Property(e => e.Message).HasColumnName("message");
             entity.Property(e => e.PlantId).HasColumnName("plant_id");
@@ -196,11 +208,6 @@ public partial class PlantsInformationContext : DbContext
                 .HasForeignKey(d => d.PlantId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("notification_plant_id_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("notification_user_id_fkey");
         });
 
         modelBuilder.Entity<Nutritionalvalue>(entity =>
@@ -234,16 +241,12 @@ public partial class PlantsInformationContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ExpiresAt).HasColumnName("expires_at");
             entity.Property(e => e.IsUsed)
-                .HasDefaultValue(false)
+                .HasDefaultValueSql("false")
                 .HasColumnName("is_used");
             entity.Property(e => e.OtpCode)
                 .HasMaxLength(10)
                 .HasColumnName("otp_code");
             entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Passwordresetrequests)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("passwordresetrequests_user_id_fkey");
         });
 
         modelBuilder.Entity<Plant>(entity =>
@@ -400,7 +403,7 @@ public partial class PlantsInformationContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.IsDeleted)
-                .HasDefaultValue(false)
+                .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
             entity.Property(e => e.ParentCommentId).HasColumnName("parent_comment_id");
             entity.Property(e => e.PlantId).HasColumnName("plant_id");
@@ -418,11 +421,6 @@ public partial class PlantsInformationContext : DbContext
             entity.HasOne(d => d.Plant).WithMany(p => p.Plantcomments)
                 .HasForeignKey(d => d.PlantId)
                 .HasConstraintName("plantcomment_plant_id_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Plantcomments)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("plantcomment_user_id_fkey");
         });
 
         modelBuilder.Entity<Plantimage>(entity =>
@@ -435,7 +433,7 @@ public partial class PlantsInformationContext : DbContext
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.ImageUrl).HasColumnName("image_url");
             entity.Property(e => e.IsPrimary)
-                .HasDefaultValue(false)
+                .HasDefaultValueSql("false")
                 .HasColumnName("is_primary");
             entity.Property(e => e.PlantId).HasColumnName("plant_id");
 
@@ -461,11 +459,6 @@ public partial class PlantsInformationContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("searched_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Plantsearchlogs)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("plantsearchlog_user_id_fkey");
         });
 
         modelBuilder.Entity<Plantsearchresultlog>(entity =>
@@ -529,11 +522,6 @@ public partial class PlantsInformationContext : DbContext
                 .HasForeignKey(d => d.PlantId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("plantviewlog_plant_id_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Plantviewlogs)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("plantviewlog_user_id_fkey");
         });
 
         modelBuilder.Entity<Reference>(entity =>
@@ -655,6 +643,9 @@ public partial class PlantsInformationContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .HasColumnName("email");
+            entity.Property(e => e.Isactive)
+                .HasDefaultValueSql("true")
+                .HasColumnName("isactive");
             entity.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
                 .HasColumnName("password_hash");

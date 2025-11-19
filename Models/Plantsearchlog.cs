@@ -16,6 +16,4 @@ public partial class Plantsearchlog
     public string? FilterJson { get; set; }
 
     public virtual ICollection<Plantsearchresultlog> Plantsearchresultlogs { get; set; } = new List<Plantsearchresultlog>();
-
-    public virtual User? User { get; set; }
 }

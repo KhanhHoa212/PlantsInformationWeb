@@ -14,6 +14,4 @@ public partial class Plantviewlog
     public DateTime? ViewedAt { get; set; }
 
     public virtual Plant? Plant { get; set; }
-
-    public virtual User? User { get; set; }
 }

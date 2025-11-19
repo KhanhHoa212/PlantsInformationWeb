@@ -33,6 +33,8 @@ public partial class Plant
 
     public virtual Climate? Climate { get; set; }
 
+    public virtual ICollection<Favoriteplant> Favoriteplants { get; set; } = new List<Favoriteplant>();
+
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public virtual ICollection<Nutritionalvalue> Nutritionalvalues { get; set; } = new List<Nutritionalvalue>();

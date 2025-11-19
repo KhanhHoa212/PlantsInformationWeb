@@ -162,7 +162,7 @@ namespace PlantsInformationWeb.Repository
                     Email = u.Email,
                     Role = u.Role,
                     CreatedAt = u.CreatedAt,
-                    Isactive = u.Isactive
+                    // Isactive = u.Isactive
                 })
                 .ToListAsync();
         }

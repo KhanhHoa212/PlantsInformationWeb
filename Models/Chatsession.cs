@@ -14,6 +14,4 @@ public partial class Chatsession
     public DateTime? EndedAt { get; set; }
 
     public virtual ICollection<Chatmessage> Chatmessages { get; set; } = new List<Chatmessage>();
-
-    public virtual User? User { get; set; }
 }

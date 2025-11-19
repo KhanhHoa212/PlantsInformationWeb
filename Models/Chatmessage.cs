@@ -18,6 +18,4 @@ public partial class Chatmessage
     public DateTime? SentAt { get; set; }
 
     public virtual Chatsession? Session { get; set; }
-
-    public virtual User? User { get; set; }
 }

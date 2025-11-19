@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GrapeCity.ActiveReports.Expressions.Remote.GlobalDataTypes;
+// using GrapeCity.ActiveReports.Expressions.Remote.GlobalDataTypes;
 using Microsoft.AspNetCore.SignalR;
 
 namespace PlantsInformationWeb.Hubs

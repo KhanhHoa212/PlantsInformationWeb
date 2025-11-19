@@ -21,6 +21,6 @@ public class Index : PageModel
 
     public async Task OnGetAsync()
     {
-        Plants = await _plantService.GetSixPlantsAsync();
+        Plants = await _plantService.GetHotPlantsAsync(8);
     }
 }

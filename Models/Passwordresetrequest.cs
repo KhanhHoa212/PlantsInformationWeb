@@ -14,6 +14,4 @@ public partial class Passwordresetrequest
     public DateTime? ExpiresAt { get; set; }
 
     public bool? IsUsed { get; set; }
-
-    public virtual User? User { get; set; }
 }
