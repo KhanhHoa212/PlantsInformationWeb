@@ -5,6 +5,10 @@
     ViewData["Title"] = "Plant Lookup";
 }
 
+<script>
+    var isUserLoggedIn = @(User.Identity.IsAuthenticated.ToString().ToLower());
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,23 +16,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plant Database - Plant Lookup</title>
-
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Tempus Dominus CSS -->
     <link href="https://cdn.jsdelivr.net/npm/@@eonasdan/tempus-dominus@6.10.4/dist/css/tempus-dominus.min.css"
         rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/plants.css" />
 
 </head>
 
 <body>
-
-    <!-- Page Header -->
-    <section class="bg-light py-4">
+    <section class="page-header">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -38,140 +36,144 @@
                             <li class="breadcrumb-item active">Plants</li>
                         </ol>
                     </nav>
-                    <h1 class="display-6 fw-bold text-success">Plant Database</h1>
-                    <p class="lead text-muted">Browse our comprehensive collection of plant species</p>
+                    <h1 class="display-6 fw-bold text-success mb-2">Plant Database</h1>
+                    <p class="lead text-muted mb-0">Browse our comprehensive collection of plant species</p>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Main Content -->
-    <section class="py-4">
+    <section class="py-5" style="background-color: #F5F5F5;">
         <div class="container">
             <div class="row">
-                <!-- Sidebar Filters -->
                 <div class="col-lg-3 mb-4">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filters</h5>
-                        </div>
-                        <div class="card-body">
-                            <!-- Category Filter -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold">Category</h6>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="flowers" id="catFlowers">
-                                    <label class="form-check-label" for="catFlowers">Flowers</label>
+                    <div class="filters-sidebar">
+                        <form method="get" asp-page="/Plants" id="filterForm">
+                            <div class="filters-header">
+                                <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Filters</h5>
+                            </div>
+                            <div class="filters-body">
+                                <div class="filter-section">
+                                    <button class="filter-section-header" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#categoryFilter" aria-expanded="true">
+                                        <span><i class="bi bi-grid-3x3 me-2"></i>Category</span>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                    <div class="collapse show filter-section-content" id="categoryFilter">
+                                        @foreach (var cat in Model.Categories)
+                                        {
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="categoryIds"
+                                                    value="@cat.CategoryId" id="cat@cat.CategoryId"
+                                                    @(Request.Query["categoryIds"].Any(id => id == cat.CategoryId.ToString()) ? "checked" : "")
+                                                                                                    ? "checked" : "")>
+                                                <label class="form-check-label" for="cat@cat.CategoryId">
+                                                    @cat.CategoryName
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="trees" id="catTrees">
-                                    <label class="form-check-label" for="catTrees">Trees</label>
+
+                                <div class="filter-section">
+                                    <button class="filter-section-header" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#climateFilter" aria-expanded="true">
+                                        <span><i class="bi bi-thermometer-sun me-2"></i>Climate</span>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                    <div class="collapse show filter-section-content" id="climateFilter">
+                                        @foreach (var climate in Model.Climates)
+                                        {
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="climateIds"
+                                                    value="@climate.ClimateId" id="climate@climate.ClimateId"
+                                                   @(Request.Query["climateIds"].Any(id => id == climate.ClimateId.ToString()) ? "checked" : "")
+                                                                                                    ? "checked" : "")>
+                                                <label class="form-check-label" for="climate@climate.ClimateId">
+                                                    @climate.ClimateName
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="herbs" id="catHerbs">
-                                    <label class="form-check-label" for="catHerbs">Herbs</label>
+
+                                <div class="filter-section">
+                                    <button class="filter-section-header" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#soilFilter" aria-expanded="true">
+                                        <span><i class="bi bi-moisture me-2"></i>Soil Type</span>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                        <div class="collapse show filter-section-content" id="soilFilter">
+                                            @foreach (var soil in Model.Soils)
+                                            {
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="soilIds"
+                                                        value="@soil.SoilId" id="soil@soil.SoilId"
+                                                        @(Request.Query["soilIds"].Any(id => id == soil.SoilId.ToString()) ? "checked" : "")
+                                                                                                        ? "checked" : "")>
+                                                    <label class="form-check-label" for="soil@soil.SoilId">
+                                                        @soil.SoilName
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="vegetables"
-                                        id="catVegetables">
-                                    <label class="form-check-label" for="catVegetables">Vegetables</label>
+                                <div class="filter-actions">
+                                    <button class="btn btn-outline-secondary w-100" type="button" id="clearFilters">
+                                        <i class="bi bi-x-circle me-2"></i>Clear All
+                                    </button>
                                 </div>
                             </div>
-
-                            <!-- Climate Filter -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold">Climate</h6>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="tropical" id="climTropical">
-                                    <label class="form-check-label" for="climTropical">Tropical</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="temperate"
-                                        id="climTemperate">
-                                    <label class="form-check-label" for="climTemperate">Temperate</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="arid" id="climArid">
-                                    <label class="form-check-label" for="climArid">Arid</label>
-                                </div>
-                            </div>
-
-                            <!-- Soil Type Filter -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold">Soil Type</h6>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="clay" id="soilClay">
-                                    <label class="form-check-label" for="soilClay">Clay</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="sandy" id="soilSandy">
-                                    <label class="form-check-label" for="soilSandy">Sandy</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="loamy" id="soilLoamy">
-                                    <label class="form-check-label" for="soilLoamy">Loamy</label>
-                                </div>
-                            </div>
-
-                            <!-- Planting Season -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold">Planting Season</h6>
-                                <div class="input-group" id="plantingSeasonPicker" data-td-target-input="nearest"
-                                    data-td-target-toggle="nearest">
-                                    <input id="plantingSeasonInput" type="text" class="form-control"
-                                        data-td-target="#plantingSeasonPicker" placeholder="Select season" />
-                                    <span class="input-group-text" data-td-target="#plantingSeasonPicker"
-                                        data-td-toggle="datetimepicker">
-                                        <i class="bi bi-calendar"></i>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <button class="btn btn-success w-100 mb-2" id="applyFilters">Apply Filters</button>
-                            <button class="btn btn-outline-secondary w-100" id="clearFilters">Clear All</button>
-                        </div>
+                        </form>
                     </div>
                 </div>
 
-                <!-- Plant List -->
                 <div class="col-lg-9">
-                    <!-- Sort and View Options -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
+                    <div class="controls-bar">
+                        <div class="results-info">
                             <span class="text-muted" id="resultsCount">Showing 1-12 of 2,500 plants</span>
                         </div>
-                        <div class="d-flex gap-2">
-                            <select class="form-select" style="width: auto;" id="sortSelect">
+                        <div class="controls-actions">
+                            <select class="form-select sort-select" id="sortSelect">
                                 <option value="name-asc">Name (A-Z)</option>
                                 <option value="name-desc">Name (Z-A)</option>
                                 <option value="updated">Recently Updated</option>
                             </select>
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-outline-secondary active" id="gridView">
-                                    <i class="bi bi-grid"></i>
+                            <div class="btn-group view-toggle" role="group">
+                                <button type="button" class="btn btn-outline-secondary active" id="gridView"
+                                    data-bs-toggle="tooltip" title="Grid View">
+                                    <i class="bi bi-grid-3x3"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary" id="listView">
-                                    <i class="bi bi-list"></i>
+                                <button type="button" class="btn btn-outline-secondary" id="listView"
+                                    data-bs-toggle="tooltip" title="List View">
+                                    <i class="bi bi-list-ul"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Plant Cards Grid -->
-                    <div class="row g-4" id="plantGrid">
+                    <div class="row g-2 plant-grid-view" id="plantGrid">
                         @if (Model.PlantsInfor != null && Model.PlantsInfor.Any())
                         {
                             foreach (var plant in Model.PlantsInfor)
                             {
-                                <div class="col-md-6 col-lg-4 mb-4">
-                                    <div class="card plant-card h-100" data-bs-toggle="tooltip" title="@plant.Description">
-                                        <img src="@plant.ThumbnailUrl" class="card-img-top" alt="@plant.PlantName">
+                                <div class="col-md-6 col-lg-3 plant-item">
+                                    <div class="card plant-card h-100">
+                                        <div class="plant-card-image-wrapper">
+                                            <img src="@plant.ThumbnailUrl" class="card-img-top" alt="@plant.PlantName">
+                                            @* <div class="plant-card-overlay">
+                                                <span class="quick-view-badge">Quick View</span>
+                                            </div> *@
+                                        </div>
                                         <div class="card-body">
                                             <h5 class="card-title">@plant.PlantName</h5>
                                             <p class="scientific-name">@plant.ScientificName</p>
                                             <div class="plant-badges mb-3">
-                                                <span class="badge bg-success me-1">@plant.CategoryName</span>
+                                                <span class="badge bg-success">@plant.CategoryName</span>
                                             </div>
+                                            <button class="btn btn-outline-success btn-sm w-100 view-detail-btn"
+                                                    data-plant-id="@plant.PlantId">
+                                                <i class="bi bi-eye me-2"></i>View Details
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -179,33 +181,71 @@
                         }
                         else
                         {
-                            <div class="col-12 text-center">
-                                <p class="text-muted">No plants found.</p>
+                            <div class="col-12">
+                                <div class="no-results">
+                                    <i class="bi bi-search"></i>
+                                    <h4>No plants found</h4>
+                                    <p class="text-muted">Try adjusting your filters or search criteria</p>
+                                </div>
                             </div>
                         }
                     </div>
 
-                    <!-- Pagination -->
-                    <nav aria-label="Plant pagination" class="mt-5">
-                        <ul class="pagination justify-content-center" id="pagination">
-                            <!-- Pagination will be populated by JavaScript -->
-                        </ul>
-                    </nav>
+                    @await Html.PartialAsync("_Pagination", Model.PlantsInfor, new ViewDataDictionary(ViewData) {
+                    { "RouteName", "/Plants" }
+                                        })
                 </div>
             </div>
         </div>
     </section>
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- Tempus Dominus JS -->
+
     <script src="https://cdn.jsdelivr.net/npm/@@eonasdan/tempus-dominus@6.10.4/dist/js/tempus-dominus.min.js"></script>
-
-
-
-    <!-- Custom JS -->
     <script src="~/js/plants.js"></script>
+
+    <!-- Popup for login required -->
+    <div id="loginPopup" class="custom-modal-backdrop" style="display:none;">
+        <div class="custom-modal-dialog">
+            <div class="custom-modal-header">
+                <h5><i class="bi bi-person-lock me-2 text-danger"></i> Login Required</h5>
+                <button type="button" class="custom-modal-close" onclick="closeLoginPopup()">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <p class="mb-2">You need to log in to view plant details.</p>
+                <p class="text-muted small">Please log in with your account to continue.</p>
+            </div>
+            <div class="custom-modal-footer">
+                <a id="loginPopupLink" href="/Account/Login" class="btn btn-success px-4">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Log In
+                </a>
+                <button type="button" class="btn btn-outline-secondary px-4" onclick="closeLoginPopup()">Close</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    function closeLoginPopup() {
+        document.getElementById("loginPopup").style.display = "none";
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-detail-btn").forEach(function(btn) {
+            btn.addEventListener("click", function(e) {
+                e.preventDefault(); 
+                var plantId = btn.getAttribute("data-plant-id");
+                if (isUserLoggedIn) {
+                    window.location.href = "/PlantDetail?id=" + plantId;
+                } else {
+                    var loginLink = document.getElementById("loginPopupLink");
+                    loginLink.href = "/Account/Login?returnUrl=" + encodeURIComponent("/PlantDetail?id=" + plantId);
+                    document.getElementById("loginPopup").style.display = "flex";
+                }
+            });
+        });
+    });
+</script>
+@await Html.PartialAsync("_Chatbox")
+<script>
+  window.currentSessionId = '@User.FindFirst("chat_session_id")?.Value';
+</script>
 </body>
 
 </html>

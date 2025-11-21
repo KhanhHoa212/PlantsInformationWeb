@@ -1,0 +1,524 @@
+@page "/PlantDetail"
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "admin,user")]
+@model PlantsInformationWeb.Pages.PlantDetail
+@{
+    ViewData["Title"] = "Plant Detail";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Plant.PlantName - Plant Lookup</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="~/css/plant-detail.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 py-3">
+                    <li class="breadcrumb-item">
+                        <a asp-page="/Index" class="text-decoration-none">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a asp-page="/Plants" class="text-decoration-none">Plants</a>
+                    </li>
+                    <li class="breadcrumb-item active">@Model.Plant.PlantName</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section with Image Gallery -->
+    <section class="hero-section">
+        <div class="container-fluid px-0 position-relative" style="background: linear-gradient(135deg, #f5f9f7 0%, #eef5f1 100%);">
+            <div class="container py-5">
+                <div class="row align-items-center g-5">
+                    <!-- Image Gallery -->
+                    <div class="col-lg-6">
+                        <div class="image-gallery-wrapper position-relative">
+                            <!-- Main Image with Glassmorphism Effect -->
+                            <div class="main-image-container">
+                                <div class="image-backdrop"></div>
+                                <div id="plantCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+                                    <div class="carousel-inner rounded-4 overflow-hidden image-wrapper">
+                                        @if (Model.Plant.PlantImages != null && Model.Plant.PlantImages.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.Plant.PlantImages.Count; i++)
+                                            {
+                                                var img = Model.Plant.PlantImages[i];
+                                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                                    <img src="@img.ImageUrl" 
+                                                         class="d-block w-100 carousel-image"
+                                                         alt="@(string.IsNullOrEmpty(img.Description) ? Model.Plant.PlantName : img.Description)" />
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-item active">
+                                                <img src="/placeholder.svg?height=500&width=600" 
+                                                     class="d-block w-100 carousel-image"
+                                                     alt="No image available" />
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Navigation Buttons -->
+                                    @if (Model.Plant.PlantImages != null && Model.Plant.PlantImages.Count > 1)
+                                    {
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#plantCarousel" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon"></span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#plantCarousel" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon"></span>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Thumbnail Navigation -->
+                            @if (Model.Plant.PlantImages != null && Model.Plant.PlantImages.Count > 1)
+                            {
+                                <div class="thumbnail-nav mt-4">
+                                    @for (int i = 0; i < Model.Plant.PlantImages.Count; i++)
+                                    {
+                                        var img = Model.Plant.PlantImages[i];
+                                        <div class="thumbnail-item @(i == 0 ? "active" : "")" data-bs-slide-to="@i" data-bs-target="#plantCarousel">
+                                            <img src="@img.ImageUrl" alt="Thumbnail @(i + 1)" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Plant Header Info -->
+                    <div class="col-lg-6">
+                        <div class="plant-info-hero">
+                            <div class="mb-3">
+                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-2">
+                                    <i class="bi bi-leaf"></i> @Model.Plant.CategoryName
+                                </span>
+                            </div>
+
+                            <h1 class="plant-title">@Model.Plant.PlantName</h1>
+                            <p class="plant-scientific-name"><em>@Model.Plant.ScientificName</em></p>
+
+                            <!-- Quick Info Grid -->
+                            <div class="quick-info-grid mt-5 mb-5">
+                                <div class="info-card">
+                                    <div class="info-icon">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Origin</small>
+                                        <p class="fw-semibold">@Model.Plant.Origin</p>
+                                    </div>
+                                </div>
+
+                                <div class="info-card">
+                                    <div class="info-icon">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Growth Cycle</small>
+                                        <p class="fw-semibold">@Model.Plant.GrowthCycle</p>
+                                    </div>
+                                </div>
+
+                                <div class="info-card">
+                                    <div class="info-icon">
+                                        <i class="bi bi-cloud-sun"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Climate</small>
+                                        <p class="fw-semibold">@Model.Plant.Climate.ClimateName</p>
+                                    </div>
+                                </div>
+
+                                <div class="info-card">
+                                    <div class="info-icon">
+                                        <i class="bi bi-droplet"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Water Needs</small>
+                                        <p class="fw-semibold">Moderate</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons d-flex gap-3">
+                                <button id="favorite-btn" 
+                                        class="btn btn-success-custom @(Model.IsFavorited ? "favorited" : "")" 
+                                        data-plant-id="@Model.Plant.PlantId">
+                                    <i class="bi @(Model.IsFavorited ? "bi-heart-fill" : "bi-heart")"></i>
+                                    @(Model.IsFavorited ? "Remove from favorite" : "Add to favorite")
+                                </button>
+                                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                    <i class="bi bi-download"></i> Export
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="bi bi-share"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Description Section -->
+    <section class="description-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <!-- Added section header with decorative line -->
+                    <div class="section-header">
+                        <h2 class="section-title">About This Plant</h2>
+                        <div class="section-divider-line"></div>
+                    </div>
+                    <p class="lead">@Model.Plant.Description</p>
+                </div>
+            </div>
+        </div>
+        <!-- Added wave divider between Description and Tabs -->
+        <div class="wave-divider">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="wave-svg">
+                <path d="M0,50 Q300,0 600,50 T1200,50 L1200,120 L0,120 Z" fill="currentColor"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Detailed Information Tabs -->
+    <section class="tabs-section py-5">
+        <!-- Added "Detailed Insights" header to guide user from Description to Tabs -->
+        <div class="container mb-4">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="section-header">
+                        <h2 class="section-subtitle">Detailed Insights</h2>
+                        <p class="section-description">Explore comprehensive information about this plant's characteristics, requirements, and care.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="custom-tabs">
+                <ul class="tab-nav" id="plantTabs" role="tablist">
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button">
+                            <i class="bi bi-info-circle"></i> General
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link" id="climate-tab" data-bs-toggle="tab" data-bs-target="#climate" type="button">
+                            <i class="bi bi-thermometer"></i> Climate
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link" id="soil-tab" data-bs-toggle="tab" data-bs-target="#soil" type="button">
+                            <i class="bi bi-flower1"></i> Soil
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link" id="region-tab" data-bs-toggle="tab" data-bs-target="#region" type="button">
+                            <i class="bi bi-map"></i> Region
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link" id="diseases-tab" data-bs-toggle="tab" data-bs-target="#diseases" type="button">
+                            <i class="bi bi-shield-exclamation"></i> Diseases
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link" id="uses-tab" data-bs-toggle="tab" data-bs-target="#uses" type="button">
+                            <i class="bi bi-star"></i> Uses
+                        </button>
+                    </li>
+                    <li class="tab-item" role="presentation">
+                        <button class="tab-link" id="references-tab" data-bs-toggle="tab" data-bs-target="#references" type="button">
+                            <i class="bi bi-book"></i> References
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-5" id="plantTabContent">
+                    <!-- General Info Tab -->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="info-panel">
+                                    <h5 class="panel-title mb-3">
+                                        <i class="bi bi-leaf"></i> Physical Characteristics
+                                    </h5>
+                                    <ul class="feature-list">
+                                        <li>Thorny stems with compound leaves</li>
+                                        <li>Flowers typically have 5 petals</li>
+                                        <li>Colors range from white to deep red</li>
+                                        <li>Strong, pleasant fragrance</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-panel">
+                                    <h5 class="panel-title mb-3">
+                                        <i class="bi bi-arrow-repeat"></i> Growth Habits
+                                    </h5>
+                                    <ul class="feature-list">
+                                        <li>Blooms from spring to fall</li>
+                                        <li>Requires regular pruning</li>
+                                        <li>Can live for decades with proper care</li>
+                                        <li>Attracts bees and butterflies</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Climate Tab -->
+                    <div class="tab-pane fade" id="climate" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="info-panel">
+                                    <h5 class="panel-title mb-3">
+                                        <i class="bi bi-thermometer"></i> Temperature
+                                    </h5>
+                                    <p class="info-text"><strong>Optimal Range:</strong></p>
+                                    <p>@Model.Plant.Climate.TemperatureRange</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-panel">
+                                    <h5 class="panel-title mb-3">
+                                        <i class="bi bi-cloud-rain"></i> Humidity & Rainfall
+                                    </h5>
+                                    <p class="info-text"><strong>Humidity:</strong> @Model.Plant.Climate.HumidityRange</p>
+                                    <p class="info-text"><strong>Rainfall:</strong> @Model.Plant.Climate.RainfallRange</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soil Tab -->
+                    <div class="tab-pane fade" id="soil" role="tabpanel">
+                        <div class="row g-4">
+                            @foreach (var soil in Model.Plant.SoilType)
+                            {
+                                <div class="col-md-6">
+                                    <div class="info-panel">
+                                        <h5 class="panel-title mb-3">@soil.SoilName</h5>
+                                        <div class="soil-spec">
+                                            <p><strong>pH Range:</strong> @soil.PhRange</p>
+                                            <p><strong>Fertility:</strong> @soil.FertilityLevel</p>
+                                            @if (!string.IsNullOrEmpty(soil.Description))
+                                            {
+                                                <p class="text-muted">@soil.Description</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Region Tab -->
+                    <div class="tab-pane fade" id="region" role="tabpanel">
+                        <div class="row g-4">
+                            @foreach (var region in Model.Plant.Regions)
+                            {
+                                <div class="col-md-6">
+                                    <div class="info-panel">
+                                        <h5 class="panel-title mb-3">@region.RegionName</h5>
+                                        @if (!string.IsNullOrEmpty(region.Description))
+                                        {
+                                            <p>@region.Description</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Diseases Tab -->
+                    <div class="tab-pane fade" id="diseases" role="tabpanel">
+                        <div class="row g-4">
+                            @foreach (var disease in Model.Plant.Disease)
+                            {
+                                <div class="col-md-6">
+                                    <div class="info-panel disease-panel">
+                                        <h5 class="panel-title mb-3">
+                                            <i class="bi bi-shield-exclamation"></i> @disease.DiseaseName
+                                        </h5>
+                                        <div class="disease-content">
+                                            <p><strong>Symptoms:</strong></p>
+                                            <p class="text-muted">@disease.Symptoms</p>
+                                            <p class="mt-3"><strong>Treatment:</strong></p>
+                                            <p class="text-muted">@disease.Solution</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Uses Tab -->
+                    <div class="tab-pane fade" id="uses" role="tabpanel">
+                        <div class="row g-4">
+                            @{
+                                var usageGroups = Model.Plant.Usages
+                                    .GroupBy(u => u.UsageType)
+                                    .ToDictionary(g => g.Key, g => g.Select(u => u.Details).ToList());
+
+                                var usageTypesOrder = new[] {
+                                    "Ornamental Uses",
+                                    "Culinary Uses",
+                                    "Medicinal Properties",
+                                    "Commercial Uses"
+                                };
+                            }
+
+                            @foreach (var usageType in usageTypesOrder)
+                            {
+                                if (usageGroups.ContainsKey(usageType))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="info-panel">
+                                            <h5 class="panel-title mb-3">@usageType</h5>
+                                            <ul class="feature-list">
+                                                @foreach (var details in usageGroups[usageType])
+                                                {
+                                                    <li>@details</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <!-- References Tab -->
+                    <div class="tab-pane fade" id="references" role="tabpanel">
+                        <div class="info-panel">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h5 class="panel-title mb-3">Scientific Literature</h5>
+                                    <ul class="reference-list">
+                                        <li><a href="#" target="_blank">American Rose Society - Rose Care Guide</a></li>
+                                        <li><a href="#" target="_blank">Royal Horticultural Society - Rosa Species</a></li>
+                                        <li><a href="#" target="_blank">Journal of Plant Pathology - Rose Diseases</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="panel-title mb-3">Books & Publications</h5>
+                                    <ul class="reference-list">
+                                        <li>"The Rose Bible" by Rayford Clayton Reddell</li>
+                                        <li>"Roses For Dummies" by Lance Walheim</li>
+                                        <li>"The Well-Tended Perennial Garden" by Tracy DiSabato-Aust</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comments Section -->
+    <section class="comments-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <h2 class="section-title mb-5">Community Discussions</h2>
+
+                    <!-- New Comment Form -->
+                    <div class="comment-form-wrapper mb-5">
+                        <form class="comment-form" id="newCommentForm">
+                            <div class="form-group">
+                                <textarea class="form-control form-control-lg" 
+                                          id="commentText"
+                                          placeholder="Share your thoughts and experience with this plant..."
+                                          rows="4" 
+                                          maxlength="500"
+                                          required></textarea>
+                                <small class="text-muted d-block mt-2">
+                                    <span id="charCount">0</span>/500 characters
+                                </small>
+                            </div>
+                            <div class="d-flex gap-2 mt-3">
+                                <button type="submit" class="btn btn-success-custom">
+                                    <i class="bi bi-send"></i> Post Comment
+                                </button>
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Clear
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Comments List -->
+                    <div class="comments-list"></div>
+
+                    <!-- Load More -->
+                    <div class="text-center mt-5">
+                        <button class="btn btn-outline-success btn-lg px-5" id="loadMoreBtn">
+                            <i class="bi bi-arrow-down"></i> Load More Comments
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Export Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title">Export Plant Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-4">Choose your preferred export format:</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-danger" onclick="exportToPDF()">
+                            <i class="bi bi-file-pdf"></i> Export as PDF
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportToExcel()">
+                            <i class="bi bi-file-excel"></i> Export as Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_Chatbox")
+    <script>
+        window.currentSessionId = '@User.FindFirst("chat_session_id")?.Value';
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Custom JS -->
+    <script src="~/js/plant-detail.js"></script>
+</body>
+</html>

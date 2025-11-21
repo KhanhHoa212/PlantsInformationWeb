@@ -61,11 +61,11 @@
         if (isGridView) {
           $plantGrid
             .removeClass("plant-list-view")
-            .addClass("plant-grid-view row g-4");
+            .addClass("plant-grid-view row g-2");
           $plantGrid
             .find(".plant-item")
             .removeClass("col-12")
-            .addClass("col-md-6 col-lg-4");
+            .addClass("col-md-6 col-lg-3");
         } else {
           $plantGrid
             .removeClass("plant-grid-view row g-4")

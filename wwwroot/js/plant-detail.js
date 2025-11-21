@@ -2,20 +2,243 @@
 const $ = window.jQuery;
 const bootstrap = window.bootstrap;
 
-function showAlert(message, type = "info") {
-  const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show position-fixed"
-             style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `;
+function showNotification(type, message, title = null, duration = 3000) {
+  const config = {
+    success: {
+      bgColor: "#ffffff",
+      borderColor: "#10b981",
+      iconBgColor: "#d1fae5",
+      iconColor: "#10b981",
+      textColor: "#1f2937",
+      descColor: "#6b7280",
+      progressColor: "#10b981",
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="10" fill="currentColor"/>
+<path d="M8 12l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+      defaultTitle: "Success",
+    },
+    error: {
+      bgColor: "#ffffff",
+      borderColor: "#ef4444",
+      iconBgColor: "#fee2e2",
+      iconColor: "#ef4444",
+      textColor: "#1f2937",
+      descColor: "#6b7280",
+      progressColor: "#ef4444",
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="10" fill="currentColor"/>
+<path d="M8 8l8 8M16 8l-8 8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+</svg>`,
+      defaultTitle: "Error",
+    },
+    info: {
+      bgColor: "#ffffff",
+      borderColor: "#3b82f6",
+      iconBgColor: "#dbeafe",
+      iconColor: "#3b82f6",
+      textColor: "#1f2937",
+      descColor: "#6b7280",
+      progressColor: "#3b82f6",
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="10" fill="currentColor"/>
+<path d="M12 8v.01M12 12v4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+</svg>`,
+      defaultTitle: "Info",
+    },
+    warning: {
+      bgColor: "#ffffff",
+      borderColor: "#f59e0b",
+      iconBgColor: "#fef3c7",
+      iconColor: "#f59e0b",
+      textColor: "#1f2937",
+      descColor: "#6b7280",
+      progressColor: "#f59e0b",
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+<path d="M12 2l10 18H2L12 2z" fill="currentColor"/>
+<path d="M12 9v4M12 15h.01" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`,
+      defaultTitle: "Warning",
+    },
+  };
 
-  $("body").append(alertHtml);
+  const style = config[type] || config.info;
+  const notificationTitle = title || style.defaultTitle;
+
+  // Container chính
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${style.bgColor};
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    display: flex;
+    align-items: stretch;
+    max-width: 400px;
+    animation: notificationSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  `;
+
+  // Thanh bên trái
+  const leftBar = document.createElement("div");
+  leftBar.style.cssText = `
+    width: 5px;
+    background: ${style.borderColor};
+    border-radius: 8px 0 0 8px;
+    flex-shrink: 0;
+  `;
+
+  // Container nội dung
+  const contentWrapper = document.createElement("div");
+  contentWrapper.style.cssText = `
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    flex: 1;
+    align-items: flex-start;
+  `;
+
+  // Icon container
+  const iconContainer = document.createElement("div");
+  iconContainer.style.cssText = `
+    background: ${style.iconBgColor};
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: ${style.iconColor};
+  `;
+  iconContainer.innerHTML = style.icon;
+
+  // Container text (title + description)
+  const textContainer = document.createElement("div");
+  textContainer.style.cssText = `
+    flex: 1;
+  `;
+
+  // Title
+  const titleEl = document.createElement("div");
+  titleEl.textContent = notificationTitle;
+  titleEl.style.cssText = `
+    font-weight: 600;
+    font-size: 15px;
+    color: ${style.textColor};
+    margin-bottom: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  `;
+
+  // Description/Message
+  const messageEl = document.createElement("div");
+  messageEl.textContent = message;
+  messageEl.style.cssText = `
+    font-size: 14px;
+    color: ${style.descColor};
+    line-height: 1.4;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  `;
+
+  textContainer.appendChild(titleEl);
+  textContainer.appendChild(messageEl);
+
+  // Close button
+  const closeBtn = document.createElement("button");
+  closeBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M15 5L5 15M5 5L15 15"/>
+</svg>`;
+  closeBtn.style.cssText = `
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.2s;
+  `;
+  closeBtn.onmouseover = () => (closeBtn.style.color = "#6b7280");
+  closeBtn.onmouseout = () => (closeBtn.style.color = "#9ca3af");
+  closeBtn.onclick = () => {
+    toast.style.animation =
+      "notificationSlideOut 0.3s cubic-bezier(0.36, 0, 0.66, -0.56)";
+    setTimeout(() => toast.remove(), 300);
+  };
+
+  // Progress bar
+  const progressBar = document.createElement("div");
+  progressBar.style.cssText = `
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: ${style.progressColor};
+    animation: notificationProgress ${duration}ms linear;
+    width: 100%;
+  `;
+
+  contentWrapper.appendChild(iconContainer);
+  contentWrapper.appendChild(textContainer);
+  contentWrapper.appendChild(closeBtn);
+
+  toast.appendChild(leftBar);
+  toast.appendChild(contentWrapper);
+  toast.appendChild(progressBar);
+
+  // Thêm CSS animation
+  if (!document.querySelector("#notification-styles")) {
+    const styleSheet = document.createElement("style");
+    styleSheet.id = "notification-styles";
+    styleSheet.textContent = `
+      @keyframes notificationSlideIn {
+        from {
+          transform: translateX(420px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+ 
+      @keyframes notificationSlideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(420px);
+          opacity: 0;
+        }
+      }
+ 
+      @keyframes notificationProgress {
+        from {
+          width: 100%;
+        }
+        to {
+          width: 0%;
+        }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  }
+
+  document.body.appendChild(toast);
 
   setTimeout(() => {
-    $(".alert").alert("close");
-  }, 3000);
+    if (toast.parentNode) {
+      toast.style.animation =
+        "notificationSlideOut 0.3s cubic-bezier(0.36, 0, 0.66, -0.56)";
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, duration);
 }
 
 $(document).ready(() => {
@@ -32,7 +255,7 @@ $(document).ready(() => {
   const plantId = urlParams.get("id");
 
   if (plantId) {
-    loadPlantDetails(plantId);
+    // loadPlantDetails(plantId);
     loadComments(plantId);
   }
 
@@ -45,7 +268,13 @@ $(document).ready(() => {
   // Load tab from URL hash
   if (window.location.hash) {
     const hash = window.location.hash;
-    $(`button[data-bs-target="${hash}"]`).tab("show");
+    const tabTriggerEl = document.querySelector(
+      `button[data-bs-target="${hash}"]`
+    );
+    if (tabTriggerEl) {
+      const tab = new bootstrap.Tab(tabTriggerEl);
+      tab.show();
+    }
   }
 
   // Favorite button functionality
@@ -68,20 +297,20 @@ $(document).ready(() => {
               .removeClass("favorited btn-success")
               .addClass("btn-outline-success");
             $btn.html('<i class="bi bi-heart"></i> Add to Favorites');
-            showAlert("Removed from favorites", "info");
+            showNotification("success", "Removed from favorites");
           } else {
             $btn
               .addClass("favorited btn-success")
               .removeClass("btn-outline-success");
             $btn.html('<i class="bi bi-heart-fill"></i> Remove from Favorites');
-            showAlert("Added to favorites!", "success");
+            showNotification("success", "Added to favorite");
           }
         } else {
-          showAlert("Operation failed!", "danger");
+          showNotification("danger", "Operation failed!");
         }
       },
       error: () => {
-        showAlert("Server error!", "danger");
+        showNotification("danger", "Server error!");
       },
       complete: () => {
         $btn.prop("disabled", false);
@@ -105,7 +334,7 @@ $(document).ready(() => {
     e.preventDefault();
     const commentText = $("#commentText").val().trim();
     if (commentText.length === 0) {
-      showAlert("Please write a comment", "warning");
+      showNotification("warning", "Please write a comment");
       return;
     }
     submitNewComment(plantId, commentText, null);
@@ -137,31 +366,15 @@ $(document).ready(() => {
     e.preventDefault();
     const replyText = $(this).find("textarea").val().trim();
     if (replyText.length === 0) {
-      showAlert("Please write a reply", "warning");
+      showNotification("warning", "Please write a reply");
+
       return;
     }
-    const $commentItem = $(this).closest(".comment-item");
-    const parentCommentId = $commentItem.data("comment-id");
-    const isParentReply = $commentItem.hasClass("reply-item");
-
-    let $replyContainer;
-    if (isParentReply) {
-      // Nếu đang reply cho reply, chuyển về comment gốc
-      const $rootComment = $commentItem.closest(
-        ".comment-item:not(.reply-item)"
-      );
-      $replyContainer = $rootComment.find(".replies-container").first();
-      submitNewComment(
-        plantId,
-        replyText,
-        $rootComment.data("comment-id"),
-        $replyContainer
-      );
-    } else {
-      // reply cho comment gốc
-      $replyContainer = $commentItem.find(".replies-container").first();
-      submitNewComment(plantId, replyText, parentCommentId, $replyContainer);
-    }
+    // Luôn tìm comment-item gốc (không có .reply-item)
+    const $rootComment = $(this).closest(".comment-item:not(.reply-item)");
+    const parentCommentId = $rootComment.data("comment-id");
+    const $replyContainer = $rootComment.find(".replies-container").first();
+    submitNewComment(plantId, replyText, parentCommentId, $replyContainer);
 
     $(this).closest(".reply-form-container").addClass("d-none");
     this.reset();
@@ -174,9 +387,16 @@ $(document).ready(() => {
       method: "GET",
       success: function (comments) {
         renderComments(comments);
+        const hash = window.location.hash;
+        if (hash && hash.startsWith("#comment-")) {
+          setTimeout(function () {
+            const commentId = hash.replace("#comment-", "");
+            scrollToComment(commentId);
+          }, 100);
+        }
       },
       error: function () {
-        showAlert("Cannot load comments", "danger");
+        showNotification("danger", "Cannot load comments");
       },
     });
   }
@@ -216,9 +436,9 @@ $(document).ready(() => {
     }
 
     let html = `
-    <div class="comment-item ${replyClass} mb-3 fade-in" data-comment-id="${
-      comment.CommentId
-    }">
+    <div class="comment-item ${replyClass} mb-3 fade-in"
+     id="comment-${comment.CommentId}"
+     data-comment-id="${comment.CommentId}">
       <div class="d-flex gap-3">
         <div class="comment-avatar flex-shrink-0">
           <div class="avatar-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold" title="${
@@ -295,7 +515,7 @@ $(document).ready(() => {
       }),
       success: function (res) {
         if (!res.success) {
-          showAlert(res.message || "Bình luận không hợp lệ", "danger");
+          showNotification(res.message || "danger", "Bình luận không hợp lệ");
           return;
         }
         const comment = res.comment;
@@ -304,21 +524,12 @@ $(document).ready(() => {
         } else {
           $replyContainer.append(buildCommentHtml(comment, true));
         }
-        showAlert("Comment posted successfully!", "success");
+        showNotification("success", "Comment posted successfully!");
       },
       error: function () {
-        showAlert("Không thể gửi comment!", "danger");
+        showNotification("danger", "Không thể gửi comment!");
       },
     });
-  }
-
-  function loadPlantDetails(plantId) {
-    showLoadingState();
-
-    setTimeout(() => {
-      hideLoadingState();
-      console.log(`Loading plant details for ID: ${plantId}`);
-    }, 1000);
   }
 
   function sharePlant() {
@@ -330,7 +541,7 @@ $(document).ready(() => {
           url: window.location.href,
         })
         .then(() => {
-          showAlert("Shared successfully!", "success");
+          showNotification("success", "Shared successfully!");
         })
         .catch((error) => {
           console.log("Error sharing:", error);
@@ -345,19 +556,11 @@ $(document).ready(() => {
     navigator.clipboard
       .writeText(window.location.href)
       .then(() => {
-        showAlert("Link copied to clipboard!", "success");
+        showNotification("success", "Link copied to clipboard!");
       })
       .catch(() => {
-        showAlert("Unable to copy link", "error");
+        showNotification("error", "Unable to copy link");
       });
-  }
-
-  function showLoadingState() {
-    $(".plant-header, .tab-content").addClass("loading");
-  }
-
-  function hideLoadingState() {
-    $(".plant-header, .tab-content").removeClass("loading");
   }
 
   // Smooth scrolling within tabs
@@ -464,20 +667,21 @@ $(document).ready(() => {
 
 // Export functions (called from modal)
 function exportToPDF() {
-  showAlert("Generating PDF...", "info");
+  showNotification("infor", "Generating PDF...");
 
   setTimeout(() => {
-    showAlert("PDF export completed!", "success");
+    showNotification("success", "PDF export completed!");
     $("#exportModal").modal("hide");
     console.log("PDF export would start here");
   }, 2000);
 }
 
 function exportToExcel() {
-  showAlert("Generating Excel file...", "info");
+  showNotification("infor", "Generating Exel file...");
 
   setTimeout(() => {
-    showAlert("Excel export completed!", "success");
+    showNotification("success", "Excel export completed!");
+
     $("#exportModal").modal("hide");
     console.log("Excel export would start here");
   }, 2000);
