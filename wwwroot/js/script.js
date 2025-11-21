@@ -45,7 +45,7 @@
                 }, 3000)
             }
 
-            $('a[href^="#"]').on("c lick", function (e) {
+            $('a[href^="#"]').on("click", function (e) {
                 // Nếu là dropdown của Bootstrap thì bỏ qua
                 if ($(this).attr("data-bs-toggle") === "dropdown") return
 

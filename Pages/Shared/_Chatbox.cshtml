@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Floating Chat Button -->
+<div class="chat-button" id="chatButton">
+    <i class="bi bi-chat-dots-fill"></i>
+</div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chatWindow">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="bi bi-flower2"></i>
+            </div>
+            <div class="chat-header-text">
+                <h5 class="chat-title">Plant Assistant 🌱</h5>
+                <p class="chat-status">Online</p>
+            </div>
+        </div>
+        <button class="chat-close" id="chatClose">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <!-- Chat Messages Area -->
+    <div class="chat-messages" id="chatMessages">
+        <!-- JS sẽ tự động render lịch sử chat khi mở chatbox -->
+        <div class="message bot-message" id="chatWelcome">
+            <div class="message-avatar">
+                <i class="bi bi-flower2"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">
+                    Hello! 👋 I'm your Plant Assistant. How can I help you today?
+                </div>
+                <span class="message-time">Just now</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+        <div class="message bot-message">
+            <div class="message-avatar">
+                <i class="bi bi-flower2"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">
+                    <span class="typing-dots">
+                        <span>.</span><span>.</span><span>.</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Input Area -->
+    <div class="chat-input-area">
+        <form class="chat-input-form" id="chatForm">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..."
+                autocomplete="off" />
+            <button type="submit" class="chat-send-button">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link href="~/css/chatbox.css" rel="stylesheet">
+<script src="~/js/chatbox.js"></script>

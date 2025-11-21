@@ -48,15 +48,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (sender === "bot") {
-      messageDiv.innerHTML = `
-                <div class="message-avatar">
-                    <i class="bi bi-flower2"></i>
-                </div>
-                <div class="message-content">
-                    <div class="message-bubble">${text}</div>
-                    <span class="message-time">${currentTime}</span>
-                </div>
-            `;
+        const htmlContent = marked.parse(text);
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="bi bi-flower2"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">${htmlContent}</div>
+                <span class="message-time">${currentTime}</span>
+            </div>
+        `;
     } else {
       messageDiv.innerHTML = `
                 <div class="message-content">
@@ -83,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const indicator = document.getElementById("typingIndicator");
     if (indicator) {
       indicator.style.display = "block";
-      
+
       const chatMessages = document.getElementById("chatMessages");
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -153,15 +154,16 @@ document.addEventListener("DOMContentLoaded", function () {
       `;
       } else {
         messageDiv.className = "message bot-message";
+        const htmlContent = marked.parse(text);
         messageDiv.innerHTML = `
-        <div class="message-avatar">
-          <i class="bi bi-flower2"></i>
-        </div>
-        <div class="message-content">
-          <div class="message-bubble">${text}</div>
-          <span class="message-time">${time}</span>
-        </div>
-      `;
+          <div class="message-avatar">
+            <i class="bi bi-flower2"></i>
+          </div>
+          <div class="message-content">
+            <div class="message-bubble">${htmlContent}</div>
+            <span class="message-time">${time}</span>
+          </div>
+        `;
       }
       chatMessages.appendChild(messageDiv);
     });
@@ -187,4 +189,3 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
- 

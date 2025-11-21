@@ -2,43 +2,187 @@
 @model IPaginatedList
 @{
     var routeName = ViewData?["RouteName"]?.ToString() ?? "";
+    var handlerName = ViewData?["HandlerName"]?.ToString() ?? "";
     var search = ViewContext.HttpContext.Request.Query["search"].ToString();
+    var containerId = ViewData?["ContainerId"]?.ToString() ?? "#unrecognizedPlantsTableContainer";
 }
 
-<!-- Pagination -->
-<nav aria-label="Pagination">
-    <ul class="pagination justify-content-center">
+<nav aria-label="Pagination" class="pagination-container">
+    <div class="pagination-wrapper">
+        <!-- Previous Button -->
         @if (Model.HasPreviousPage)
         {
-            <li class="page-item">
-                <a class="page-link" asp-page="@routeName" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-search="@search">Trước</a>
-            </li>
+            <a href="@($"{routeName}?handler={handlerName}&pageIndex={Model.PageIndex - 1}&search={search}")"
+               class="pagination-btn pagination-btn-active pagination-link"
+               data-container="@containerId">
+                <span>←</span>
+            </a>
         }
         else
         {
-            <li class="page-item disabled">
-                <span class="page-link">Trước</span>
-            </li>
+            <div class="pagination-btn pagination-btn-disabled">
+                <span>←</span>
+            </div>
         }
 
-        @for (int i = 1; i <= Model.TotalPages; i++)
-        {
-            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                <a class="page-link" asp-page="@routeName" asp-route-pageIndex="@i" asp-route-search="@search">@i</a>
-            </li>
+        <!-- Page Numbers -->
+        @{
+            int startPage = Math.Max(1, Model.PageIndex - 2);
+            int endPage = Math.Min(Model.TotalPages, Model.PageIndex + 2);
+
+            if (startPage > 1)
+            {
+                <a href="@($"{routeName}?handler={handlerName}&pageIndex=1&search={search}")"
+                   class="pagination-page pagination-link"
+                   data-container="@containerId">1</a>
+                if (startPage > 2)
+                {
+                    <span class="pagination-dots">...</span>
+                }
+            }
+
+            for (int i = startPage; i <= endPage; i++)
+            {
+                if (i == Model.PageIndex)
+                {
+                    <div class="pagination-page pagination-page-active">@i</div>
+                }
+                else
+                {
+                    <a href="@($"{routeName}?handler={handlerName}&pageIndex={i}&search={search}")"
+                       class="pagination-page pagination-link"
+                       data-container="@containerId">@i</a>
+                }
+            }
+
+            if (endPage < Model.TotalPages)
+            {
+                if (endPage < Model.TotalPages - 1)
+                {
+                    <span class="pagination-dots">...</span>
+                }
+
+                <a href="@($"{routeName}?handler={handlerName}&pageIndex={Model.TotalPages}&search={search}")"
+                   class="pagination-page pagination-link"
+                   data-container="@containerId">@Model.TotalPages</a>
+            }
         }
 
+        <!-- Next Button -->
         @if (Model.HasNextPage)
         {
-            <li class="page-item">
-                <a class="page-link" asp-page="@routeName" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-search="@search">Sau</a>
-            </li>
+            <a href="@($"{routeName}?handler={handlerName}&pageIndex={Model.PageIndex + 1}&search={search}")"
+               class="pagination-btn pagination-btn-active pagination-link"
+               data-container="@containerId">
+                <span>→</span>
+            </a>
         }
         else
         {
-            <li class="page-item disabled">
-                <span class="page-link">Sau</span>
-            </li>
+            <div class="pagination-btn pagination-btn-disabled">
+                <span>→</span>
+            </div>
         }
-    </ul>
+    </div>
 </nav>
+
+
+<style>
+    .pagination-container {
+        padding: 3rem 1rem;
+        display: block;
+    }
+
+    .pagination-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* <CHANGE> Màu xanh nhạt hơn nhiều - gradient từ #c6f6d5 (xanh cực nhạt) đến #a7f3d0 (xanh rất nhạt) */
+    .pagination-btn-active {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #c6f6d5 0%, #a7f3d0 100%);
+        color: #047857;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(167, 243, 208, 0.2);
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .pagination-btn-active:hover {
+        box-shadow: 0 6px 16px rgba(167, 243, 208, 0.3);
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+    }
+
+    .pagination-btn-disabled {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: #f3f4f6;
+        color: #d1d5db;
+        font-weight: 500;
+        cursor: not-allowed;
+        font-size: 18px;
+    }
+
+
+    .pagination-page {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: white;
+        color: #047857;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: 1px solid #d1fae5;
+        cursor: pointer;
+    }
+
+    .pagination-page:hover {
+        background: #f0fdf4;
+        border-color: #a7f3d0;
+        transform: scale(1.05);
+    }
+
+    .pagination-page-active {
+        background: linear-gradient(135deg, #46e325 0%, #6bb15e 100%);
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(167, 243, 208, 0.2);
+        border: none;
+        cursor: default;
+    }
+
+    .pagination-page-active:hover {
+        transform: none;
+    }
+
+    .pagination-dots {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        color: #d1d5db;
+        font-weight: 500;
+    }
+</style>
