@@ -63,32 +63,6 @@
 
     <div class="container" id="container">
         <!-- Sign-Up Form -->
-        @* <div class="form-container sign-up-container">
-            <form method="post" asp-page-handler="Register">
-                <h1>Create Account</h1>
-                <div class="social-container">
-                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-                <span>or use your username to register</span>
-
-                <input asp-for="Register.Username" placeholder="Name(Nickname)" />
-                <span asp-validation-for="Register.Username" class="field-error"></span>
-
-                <input asp-for="Register.Email" placeholder="Email" />
-                <span asp-validation-for="Register.Email" class="field-error"></span>
-
-                <input asp-for="Register.Password" type="password" placeholder="Password" />
-                <span asp-validation-for="Register.Password" class="field-error"></span>
-
-                <input asp-for="Register.ConfirmPassword" type="password" placeholder="Confirm Password" />
-                <span asp-validation-for="Register.ConfirmPassword" class="field-error"></span>
-
-                <button type="submit">Sign Up</button>
-            </form>
-
-        </div> *@
          <div class="form-container sign-up-container">
             <form method="post" asp-page-handler="Register">
                 <h1><i class="fas fa-seedling" style="color: #4a7c59; margin-right: 10px;"></i>Create Account</h1>
@@ -115,44 +89,6 @@
             </form>
         </div>
 
-        <!-- Sign-In Form (kết nối Razor) -->
-        @* <div class="form-container sign-in-container">
-
-            <form method="post" asp-page-handler="Login">
-
-                <h1>Sign in</h1>
-                <div class="social-container">
-                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-                <span>or use your account</span>
-
-                <input asp-for="Login.Email" placeholder="Gmail" />
-                <span asp-validation-for="Login.Email" class="field-error"></span>
-
-                <input asp-for="Login.Password" type="password" placeholder="Password" />
-                <span asp-validation-for="Login.Password" class="field-error"></span>
-                <a href="/Account/ForgotPassword">Forgot your password?</a>
-                <button type="submit">Sign In</button>
-            </form>
-        </div>
-
-        <!-- Overlay panels -->
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login with your personal info</p>
-                    <button class="ghost" id="signIn">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello, Friend!</h1>
-                    <p>Enter your personal details and start journey with us</p>
-                    <button class="ghost" id="signUp">Sign Up</button>
-                </div>
-            </div>
-        </div> *@
         <!-- Sign-In Form  -->
         <div class="form-container sign-in-container">
             <form method="post" asp-page-handler="Login">
