@@ -288,48 +288,6 @@
     </div>
 </div>
 
-<!-- Modal xác nhận xóa với theme cây trồng -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0" style="border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);">
-            <!-- Header với gradient xanh lá cây -->
-            <div class="modal-header border-0"
-                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; padding: 24px;">
-                <div class="d-flex align-items-center gap-3">
-                    <div
-                        style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-exclamation-triangle-fill" style="font-size: 24px; color: white;"></i>
-                    </div>
-                    <h5 class="modal-title mb-0" style="color: white; font-weight: 600; font-size: 18px;">Xác nhận xóa
-                        danh mục</h5>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body" style="padding: 28px;">
-                <p style="margin-bottom: 12px; color: #1f2937; font-size: 15px;">
-                    Bạn có chắc chắn muốn xóa danh mục <strong style="color: #059669;" id="deleteName"></strong>?
-                </p>
-                <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5;">
-                    <i class="bi bi-info-circle me-2" style="color: #10b981;"></i>
-                    Hành động này không thể hoàn tác. Vui lòng cân nhắc kỹ trước khi xóa.
-                </p>
-            </div>
-
-            <div class="modal-footer border-top"
-                style="border-top-color: #e5e7eb !important; padding: 16px 28px; gap: 12px;">
-                <button type="button" class="btn" data-bs-dismiss="modal"
-                    style="background-color: #f3f4f6; color: #374151; border: none; border-radius: 8px; padding: 8px 20px; font-weight: 500; transition: all 0.2s;">Hủy</button>
-                <button type="button" class="btn" id="confirmDeleteBtn"
-                    style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 8px; padding: 8px 20px; font-weight: 500; transition: all 0.2s;"
-                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(239, 68, 68, 0.3)';"
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <!-- Keep existing Chart.js and dashboard.js references -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="~/js/dashboard.js"></script>
@@ -390,6 +348,5 @@
             }
         });
     }
-
 
 </script>
