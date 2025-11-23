@@ -13,6 +13,7 @@ using PlantsInformationWeb.ViewModels;
 
 namespace PlantsInformationWeb.Pages.Admin
 {
+    [IgnoreAntiforgeryToken]
     [Authorize(Roles = "admin")]
     public class UserManagement : PageModel
     {
@@ -35,7 +36,7 @@ namespace PlantsInformationWeb.Pages.Admin
         public async Task OnGetAsync(string search, string role, string status, int? pageIndex)
         {
             int pageSize = 10;
-            var query = _userService.GetUserQuery( search,  role,  status);
+            var query = _userService.GetUserQuery(search, role, status);
             Users = await PaginatedList<User>.CreateAsync(query, pageIndex ?? 1, pageSize);
         }
 
@@ -43,38 +44,65 @@ namespace PlantsInformationWeb.Pages.Admin
         {
             if (!ModelState.IsValid)
             {
-                TempData["NotificationType"] = "error";
-                TempData["NotificationMessage"] = "Invalid infor.";
-                return Page();
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "Invalid infor."
+                });
             }
 
             var success = await _userService.AddUserAsync(NewUser);
             if (!success)
             {
-                TempData["NotificationType"] = "error";
-                TempData["NotificationMessage"] = "Email is already existed.";
-                return Page();
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "Email is already existed."
+                });
             }
 
-            TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Add user successful.";
-            return Page();
+            return new JsonResult(new
+            {
+                success = true,
+                message = "Add user successful."
+            });
         }
 
         public async Task<IActionResult> OnPostToggleActiveAsync(int id)
         {
+            var currentUserIdStr = User.FindFirst("user_id")?.Value;
+            int currentUserId = 0;
+            if (!string.IsNullOrEmpty(currentUserIdStr))
+                int.TryParse(currentUserIdStr, out currentUserId);
+
+            if (id == currentUserId)
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "You cannot lock your own account!"
+                });
+            }
             var result = await _userService.ToggleUserActiveStatusAsync(id);
             if (!result)
             {
-                TempData["NotificationMessage"] = "Không tìm thấy người dùng.";
-                TempData["NotificationType"] = "error";
-                return RedirectToPage();
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "User not found."
+                });
             }
 
-            TempData["NotificationMessage"] = "Trạng thái tài khoản đã được cập nhật.";
-            TempData["NotificationType"] = "success";
-            return RedirectToPage();
-        }
+            var user = await _userService.GetUsersAsync();
+            var updatedUser = user.FirstOrDefault(x => x.UserId == id);
 
+            return new JsonResult(new
+            {
+                success = true,
+                message = "Account status has been updated.",
+                newStatus = updatedUser?.Isactive
+            });
+
+        }
     }
 }

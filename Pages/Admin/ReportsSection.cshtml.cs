@@ -10,113 +10,222 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using PlantsInformationWeb.DTOs;
+using PlantsInformationWeb.Services;
 
 namespace PlantsInformationWeb.Pages.Admin
 {
     [Authorize(Roles = "admin")]
+    [IgnoreAntiforgeryToken]
     public class ReportsSectionModel : PageModel
     {
         private readonly PlantsInformationContext _context;
-        public ReportsSectionModel(PlantsInformationContext context)
+        private readonly CategoryService _categoryService;
+        private readonly RegionService _regionService;
+        private readonly PlantService _plantService;
+        private readonly UserService _userService;
+        private readonly ClimateService _climateService;
+        private readonly FavoritePlantService _favoriteService;
+        private readonly PlantViewLogService _plantViewLogService;
+
+        public CategoryDto TopCategory { get; set; }
+        public double TopCategoryPercent { get; set; }
+        public RegionDto TopRegion { get; set; }
+        public int TotalPlant { get; set; }
+        public int TotalUser { get; set; }
+        public double TopRegionPercent { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public DateTime? StartDate { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public DateTime? EndDate { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string ExportFormat { get; set; }
+
+        public ReportsSectionModel(PlantsInformationContext context, FavoritePlantService favoritePlantService, PlantViewLogService plantViewLogService, ClimateService climateService, UserService userService, PlantService plantService, CategoryService categoryService, RegionService regionService)
         {
             _context = context;
+            _categoryService = categoryService;
+            _regionService = regionService;
+            _plantService = plantService;
+            _userService = userService;
+            _climateService = climateService;
+            _plantViewLogService = plantViewLogService;
+            _favoriteService = favoritePlantService;
         }
 
-        public async Task<IActionResult> OnPostExportPdfAsync()
+        public async Task OnGetAsync()
         {
-            QuestPDF.Settings.License = LicenseType.Community;
+            var caregory = await _categoryService.GetTop1CategoryWithPercentAsync();
+            TopCategory = caregory.TopCategory;
+            TopCategoryPercent = caregory.percent;
 
-            // Lấy dữ liệu cây trồng (có thể thêm Include nếu cần)
-            var plants = await _context.Plants
-                .Include(p => p.Category)
-                .Include(p => p.Climate)
-                .ToListAsync();
+            var region = await _regionService.GetTop1RegionWithPercentAsync();
+            TopRegion = region.TopRegion;
+            TopRegionPercent = region.percent;
 
-            // Tạo PDF bằng QuestPDF
-            var stream = new MemoryStream();
-
-            Document.Create(document =>
-            {
-                document.Page(page =>
-                {
-                    page.Margin(30);
-
-                    page.Header().Text("Plants Information Report")
-                        .FontSize(20).Bold().AlignCenter();
-
-                    page.Content().Table(table =>
-                    {
-                        // Định nghĩa số cột
-                        table.ColumnsDefinition(columns =>
-                        {
-                            columns.RelativeColumn(2);
-                            columns.RelativeColumn(2);
-                            columns.RelativeColumn(2);
-                            columns.RelativeColumn(2);
-                            columns.RelativeColumn(2);
-                        });
-
-                        // Header
-                        table.Header(header =>
-                        {
-                            header.Cell().Element(CellStyle).Text("Plant Name").Bold();
-                            header.Cell().Element(CellStyle).Text("Scientific Name").Bold();
-                            header.Cell().Element(CellStyle).Text("Category").Bold();
-                            header.Cell().Element(CellStyle).Text("Climate").Bold();
-                            header.Cell().Element(CellStyle).Text("Created At").Bold();
-                        });
-
-                        // Rows
-                        foreach (var plant in plants)
-                        {
-                            table.Cell().Element(CellStyle).Text(plant.PlantName);
-                            table.Cell().Element(CellStyle).Text(plant.ScientificName);
-                            table.Cell().Element(CellStyle).Text(plant.Category?.CategoryName ?? "");
-                            table.Cell().Element(CellStyle).Text(plant.Climate?.ClimateName ?? "");
-                            table.Cell().Element(CellStyle).Text(plant.CreatedAt?.ToString("yyyy-MM-dd") ?? "");
-                        }
-
-                        // Cell style helper
-                        IContainer CellStyle(IContainer container)
-                            => container.PaddingVertical(5).PaddingHorizontal(2);
-                    });
-
-                    page.Footer().AlignCenter().Text($"Generated on {DateTime.Now:yyyy-MM-dd HH:mm}");
-                });
-            })
-            .GeneratePdf(stream);
-
-            stream.Position = 0;
-            return File(stream, "application/pdf", "PlantsReport.pdf");
+            TotalPlant = await _plantService.GetTotalPlantsAsync();
+            TotalUser = await _userService.GetTotalUsersCountAsync();
         }
 
-        public async Task<IActionResult> OnPostExportCsvAsync()
+        public async Task<IActionResult> OnGetPlantAdditionChartDataAsync(DateTime? startDate, DateTime? endDate)
         {
-            var plants = await _context.Plants
-                .Include(p => p.Category)
-                .Include(p => p.Climate)
-                .ToListAsync();
-
-            var csv = new StringBuilder();
-
-            // Header: Thêm Plant ID vào đầu
-            csv.AppendLine("Plant ID,Plant Name,Scientific Name,Category,Climate,Created At,Status");
-
-            foreach (var plant in plants)
+            if (!startDate.HasValue || !endDate.HasValue)
             {
-                string plantId = $"\"{plant.PlantId}\"";
-                string plantName = $"\"{plant.PlantName}\"";
-                string scientificName = $"\"{plant.ScientificName}\"";
-                string category = $"\"{plant.Category?.CategoryName ?? ""}\"";
-                string climate = $"\"{plant.Climate?.ClimateName ?? ""}\"";
-                string createdAt = $"\"{plant.CreatedAt?.ToString("yyyy-MM-dd") ?? ""}\"";
-                string status = $"\"{plant.Status}\"";
-
-                csv.AppendLine($"{plantId},{plantName},{scientificName},{category},{climate},{createdAt},{status}");
+                int currentYear = DateTime.Now.Year;
+                startDate = new DateTime(currentYear, 1, 1);
+                endDate = new DateTime(currentYear, 12, 31);
+            }
+            var result = await _plantService.GetPlantAdditionByMonthAsync(startDate.Value, endDate.Value);
+            return new JsonResult(new { labels = result.Labels, data = result.Data });
+        }
+        public async Task<IActionResult> OnGetUserAdditionChartDataAsync(DateTime? startDate, DateTime? endDate)
+        {
+            // Nếu không truyền ngày, lấy cả năm hiện tại
+            if (!startDate.HasValue || !endDate.HasValue)
+            {
+                int currentYear = DateTime.Now.Year;
+                startDate = new DateTime(currentYear, 1, 1);
+                endDate = new DateTime(currentYear, 12, 31);
             }
 
-            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
-            return File(bytes, "text/csv", "PlantsReport.csv");
+            var result = await _userService.GetUserAdditionByMonthAsync(startDate.Value, endDate.Value);
+
+            return new JsonResult(new { labels = result.Labels, data = result.Data });
         }
+
+        public async Task<JsonResult> OnGetCategoryPlantChartDataAsync(DateTime? startDate, DateTime? endDate)
+        {
+            // Nếu không truyền ngày, lấy cả năm hiện tại
+            if (!startDate.HasValue || !endDate.HasValue)
+            {
+                int currentYear = DateTime.Now.Year;
+                startDate = new DateTime(currentYear, 1, 1);
+                endDate = new DateTime(currentYear, 12, 31);
+            }
+
+            var data = await _categoryService.GetCategoriesWithPlantCountAsync(startDate.Value, endDate.Value);
+            var labels = data.Select(x => x.CategoryName).ToList();
+            var value = data.Select(x => x.PlantCount).ToList();
+            return new JsonResult(new { labels, data = value });
+        }
+
+
+
+        public async Task<JsonResult> OnGetClimateChartDataAsync(DateTime? startDate, DateTime? endDate)
+        {
+            // Nếu không truyền ngày, lấy cả năm hiện tại
+            if (!startDate.HasValue || !endDate.HasValue)
+            {
+                int currentYear = DateTime.Now.Year;
+                startDate = new DateTime(currentYear, 1, 1);
+                endDate = new DateTime(currentYear, 12, 31);
+            }
+
+            var result = await _climateService.GetClimatesWithPlantCountAsync(startDate.Value, endDate.Value);
+            return new JsonResult(new { labels = result.Labels, data = result.Data });
+        }
+
+        public async Task<JsonResult> OnGetRegionChartDataAsync(DateTime? startDate, DateTime? endDate)
+        {
+            // Nếu không truyền ngày, lấy cả năm hiện tại
+            if (!startDate.HasValue || !endDate.HasValue)
+            {
+                int currentYear = DateTime.Now.Year;
+                startDate = new DateTime(currentYear, 1, 1);
+                endDate = new DateTime(currentYear, 12, 31);
+            }
+
+            // Truyền filter xuống service
+            var result = await _regionService.GetRegionListsAsync(startDate.Value, endDate.Value);
+            return new JsonResult(new { labels = result.Labels, data = result.Data });
+        }
+        public async Task<JsonResult> OnGetTopViewedPlantsAsync(DateTime? startDate, DateTime? endDate, int? top)
+        {
+            int topCount = top ?? 10;
+
+            var result = await _plantViewLogService.GetTopViewedPlantsAsync(startDate, endDate, topCount);
+
+            return new JsonResult(result);
+        }
+
+        public async Task<JsonResult> OnGetTopFavoritePlantsAsync(DateTime? startDate, DateTime? endDate, int? top)
+        {
+            int topCount = top ?? 10;
+
+            var result = await _favoriteService.GetTopFavoritePlantsAsync(startDate, endDate, topCount);
+
+            return new JsonResult(result);
+        }
+
+        public async Task<IActionResult> OnPostExportUserRegistrationsAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _userService.ExportUserRegistrationsPdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"user_registrations_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
+        public async Task<IActionResult> OnPostExportPlantAdditionAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _plantService.ExportPlantAdditionPdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"plant_addition_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
+        public async Task<IActionResult> OnPostExportPlantDistributionAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _regionService.ExportPlantDistributionPdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"plant_distribution_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
+        public async Task<IActionResult> OnPostExportPlantDistributionByCategoryAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _categoryService.ExportPlantDistributionByCategoryPdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"plant_distribution_category_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
+        public async Task<IActionResult> OnPostExportPlantDistributionByClimateAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _climateService.ExportPlantDistributionByClimatePdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"plant_distribution_climate_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
+        public async Task<IActionResult> OnPostExportPlantViewAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _plantViewLogService.ExportPlantViewPdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"plant_distribution_climate_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
+        public async Task<IActionResult> OnPostExportPlantFavoriteAsync(DateTime? startDate, DateTime? endDate, string format, string chartImage)
+        {
+            if (format?.ToLower() == "pdf")
+            {
+                var fileBytes = await _favoriteService.ExportPlantFavoritePdfAsync(startDate, endDate, chartImage);
+                return File(fileBytes, "application/pdf", $"plant_favorite_view_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            }
+            return BadRequest("Unsupported format");
+        }
+
     }
 }

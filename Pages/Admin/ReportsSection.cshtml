@@ -4,93 +4,312 @@
 @attribute [Authorize(Roles = "admin")]
 @{
     Layout = "_LayoutAdmin";
-    ViewData["Title"] = "Reports Management";
+    ViewData["Title"] = "Reports & Export";
 }
 
-<!-- Reports Section -->
-<div id="reports-section" class="content-section">
-    <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2 text-success">Reports & Data Export</h1>
+<head>
+    <link href="~/css/reports.css" rel="stylesheet">
+</head>
+
+<div id="reports-section" class="reports-container">
+    <div class="reports-header">
+        <div class="header-content">
+            <div>
+                <h1 class="reports-title">
+                    <i class="bi bi-graph-up me-2"></i>Reports & Data Export
+                </h1>
+                <p class="reports-subtitle">Generate comprehensive reports and export data in multiple formats</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Report Filters -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Report Filters</h5>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <div class="filter-card-header">
+            <div class="filter-icon-badge">
+                <i class="bi bi-funnel-fill"></i>
+            </div>
+            <div>
+                <h5 class="filter-title">Report Configuration</h5>
+                <p class="filter-subtitle">Select date range to generate custom reports</p>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="form-label">Start Date</label>
-                    <div class="input-group" id="startDatePicker" data-td-target-input="nearest"
-                        data-td-target-toggle="nearest">
-                        <input id="startDate" type="text" class="form-control" data-td-target="#startDatePicker" />
-                        <span class="input-group-text" data-td-target="#startDatePicker"
-                            data-td-toggle="datetimepicker">
-                            <i class="bi bi-calendar"></i>
-                        </span>
+        <div class="filter-card-body">
+            <form method="get" class="filter-form" id="filterForm">
+                <div class="row g-3 align-items-end">
+                    <!-- Start Date -->
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            <i class="bi bi-calendar-range me-1"></i>Start Date
+                        </label>
+                        <input name="startDate" id="startDate" type="date" class="form-control"
+                            value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <!-- End Date -->
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            <i class="bi bi-calendar-check me-1"></i>End Date
+                        </label>
+                        <input name="endDate" id="endDate" type="date" class="form-control"
+                            value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-md-4">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success flex-fill" id="generateReport">
+                                <i class="bi bi-graph-up me-2"></i>Generate
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="resetFilter">
+                                <i class="bi bi-arrow-clockwise"></i>Reset
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">End Date</label>
-                    <div class="input-group" id="endDatePicker" data-td-target-input="nearest"
-                        data-td-target-toggle="nearest">
-                        <input id="endDate" type="text" class="form-control" data-td-target="#endDatePicker" />
-                        <span class="input-group-text" data-td-target="#endDatePicker" data-td-toggle="datetimepicker">
-                            <i class="bi bi-calendar"></i>
-                        </span>
-                    </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="kpi-section">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-icon-primary">
+                    <i class="bi bi-flower2"></i>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Category</label>
-                    <select class="form-select" id="reportCategory">
-                        <option value="">All Categories</option>
-                        <option value="flowering">Flowering Plants</option>
-                        <option value="trees">Trees</option>
-                        <option value="herbs">Herbs</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Climate</label>
-                    <select class="form-select" id="reportClimate">
-                        <option value="">All Climates</option>
-                        <option value="tropical">Tropical</option>
-                        <option value="temperate">Temperate</option>
-                        <option value="arid">Arid</option>
-                    </select>
+                <div class="kpi-content">
+                    <span class="kpi-label">Total Plants</span>
+                    <h3 class="kpi-value">@Model.TotalPlant</h3>
+                    <span class="kpi-trend positive">
+                        <i class="bi bi-arrow-up"></i> 15.3% from last period
+                    </span>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <button type="button" class="btn btn-success me-2" id="generateReport">
-                        <i class="bi bi-graph-up me-1"></i>Generate Report
+
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-icon-success">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-label">Total Users</span>
+                    <h3 class="kpi-value">@Model.TotalUser</h3>
+                    <span class="kpi-trend positive">
+                        <i class="bi bi-arrow-up"></i> Excellent growth
+                    </span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-icon-info">
+                    <i class="bi bi-pie-chart"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-label">Top Category</span>
+                    <h3 class="kpi-value">@Model.TopCategory.CategoryName</h3>
+                    <span class="kpi-trend neutral">
+                        <i class="bi bi-dash"></i> @(Model.TopCategoryPercent.ToString("F2"))% of total
+                    </span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-icon-warning">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-label">Top Region</span>
+                    <h3 class="kpi-value">@Model.TopRegion.RegionName</h3>
+                    <span class="kpi-trend neutral">
+                        <i class="bi bi-dash"></i> @(Model.TopRegionPercent.ToString("F2"))% of total
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-section">
+        Row 1: Line Charts
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">User Registrations Over Time</h5>
+                            <p class="chart-subtitle">Monthly user growth trend</p>
+                        </div>
+                    </div>
+                    <button id="exportUserRegistrationsPdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
                     </button>
-                    <form method="post" asp-page-handler="ExportPdf">
-                        <button type="submit" class="btn btn-outline-success" id="exportPDF">
-                            <i class="bi bi-file-pdf me-1"></i>Export PDF
-                        </button>
-                    </form>
-                    <form method="post" asp-page-handler="ExportCsv">
-                        <button type="submit" class="btn btn-outline-success" id="exportCSV">
-                            <i class="bi bi-file-earmark-spreadsheet me-1"></i>Export CSV
-                        </button>
-                    </form>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="userRegistrationChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-flower2"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">Plants Added Over Time</h5>
+                            <p class="chart-subtitle">Monthly plant additions trend</p>
+                        </div>
+                    </div>
+                    <button id="exportPlantAdditionPdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="plantAdditionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-card chart-card-full">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-bar-chart"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">Plants Distribution by Region</h5>
+                            <p class="chart-subtitle">Comparative analysis across different regions</p>
+                        </div>
+                    </div>
+                    <button id="exportPlantDistributionPdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="regionBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-pie-chart"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">Plant Distribution by Category</h5>
+                            <p class="chart-subtitle">Category breakdown</p>
+                        </div>
+                    </div>
+                    <button id="exportPlantDistributionByCategoryPdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-brightness-high"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">Plant Distribution by Climate</h5>
+                            <p class="chart-subtitle">Climate zone breakdown</p>
+                        </div>
+                    </div>
+                    <button id="exportPlantDistributionByClimatePdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="climateDoughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-eye-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">Top 5 Plants Viewed Most</h5>
+                            <p class="chart-subtitle">Which plants are most popular?</p>
+                        </div>
+                    </div>
+                    <button id="exportPlantViewPdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="topPlantsChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div class="chart-header-left">
+                        <div class="chart-icon-badge">
+                            <i class="bi bi-eye-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="chart-title">Top 5 Plants Favorite Most</h5>
+                            <p class="chart-subtitle">Which plants are most favorite?</p>
+                        </div>
+                    </div>
+                    <button id="exportPlantFavoritePdf" class="btn btn-export">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="topPlantsFavoriteChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<script>
+    // Reset Filter Handler
+    document.addEventListener('DOMContentLoaded', function () {
+        const resetButton = document.getElementById('resetFilter');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
 
-    <!-- Report Preview -->
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <h5 class="mb-0">Report Preview</h5>
-        </div>
-        <div class="card-body">
-            <canvas id="reportChart"></canvas>
-        </div>
-    </div>
-</div>
-</main>
-</div>
-</div>
+        resetButton.addEventListener('click', function () {
+            // Clear the date inputs
+            startDateInput.value = '';
+            endDateInput.value = '';
+
+            // Optional: Reload the page to reset all data
+            window.location.href = window.location.pathname;
+
+            // Show success message
+            const alertHtml = `
+                <div class="alert alert-success alert-dismissible fade show position-fixed"
+                     style="top: 90px; right: 20px; z-index: 9999; min-width: 300px; border-radius: 12px;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.15);" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Filter has been reset successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', alertHtml);
+            setTimeout(() => {
+                const alert = document.querySelector('.alert');
+                if (alert) alert.remove();
+            }, 3000);
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="~/js/reports.js"></script>
