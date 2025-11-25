@@ -1,7 +1,7 @@
 @page
 @model PlantsInformationWeb.Pages.Admin.UserManagement
-    @using Microsoft.AspNetCore.Authorization
-    @attribute [Authorize(Roles = "admin")]
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "admin")]
 @{
     Layout = "_LayoutAdmin";
     ViewData["Title"] = "User Management";
@@ -23,8 +23,8 @@
     <!-- Filters -->
     <form method="get" class="row mb-3">
         <div class="col-md-4">
-            <input type="text" name="search" id="userSearch" value="@Request.Query["search"]"
-                class="form-control" placeholder="Search users..." />
+            <input type="text" name="search" id="userSearch" value="@Request.Query["search"]" class="form-control"
+                placeholder="Search users..." />
         </div>
         <div class="col-md-3">
             @{
@@ -90,13 +90,14 @@
                                     class="bi bi-arrow-down-up"></i></th>
                             <th data-bs-toggle="tooltip" title="Click to sort">Email <i class="bi bi-arrow-down-up"></i>
                             </th>
-                            <th data-bs-toggle="tooltip" title="Click to sort">Role <i class="bi bi-arrow-down-up"></i>
+                            <th data-bs-toggle="tooltip" title="Click to sort" class="text-center">Role <i
+                                    class="bi bi-arrow-down-up"></i>
                             </th>
-                            <th data-bs-toggle="tooltip" title="Click to sort">Status <i
+                            <th data-bs-toggle="tooltip" title="Click to sort" class="text-center">Status <i
                                     class="bi bi-arrow-down-up"></i></th>
-                            <th data-bs-toggle="tooltip" title="Click to sort">Created at <i
+                            <th data-bs-toggle="tooltip" title="Click to sort" class="text-center">Created at <i
                                     class="bi bi-arrow-down-up"></i></th>
-                            <th>Actions</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,28 +107,35 @@
                                 <td>@user.Username</td>
                                 <td>@user.Email</td>
                                 <td>
-                                    <span class="badge @(user.Role == "admin" ? "bg-danger" : "bg-primary")">
+                                    <span class="badge @(user.Role == "admin" ? "badge-admin" : "badge-user") ">
                                         @user.Role
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge @(user.Isactive == true ? "bg-success" : "bg-secondary")">
+                                    <span class="badge @(user.Isactive == true ? "badge-active" : "badge-inactive")">
                                         @(user.Isactive == true ? "Active" : "Inactive")
                                     </span>
                                 </td>
-                                <td>@user.CreatedAt?.ToString("yyyy-MM-dd")</td>
-                                <td>
+                                <td class="text-center">@user.CreatedAt?.ToString("yyyy-MM-dd")</td>
+
+                                <td class="text-center">
                                     <form method="post" asp-page-handler="ToggleActive" asp-route-id="@user.UserId"
                                         class="d-inline"
-                                        onsubmit="return confirm('@(user.Isactive == true ? "Are you sure you want to lock this account?" : "Are you sure you want to unlock this account?")');">
-                                        <button type="submit"
-                                            class="btn btn-sm @(user.Isactive == true ? "btn-outline-warning" : "btn-outline-success")"
+                                        onsubmit="return confirm('@(user.Isactive == true? "Are you sure you want to lock this account?" : "Are you sure you want to unlock this account?")');">
+
+                                        <button type="button"
+                                            class="btn btn-sm @(user.Isactive == true ? "btn-outline-lock" : "btn-outline-unlock")"
+                                            onclick="toggleUserActive('@user.UserId', this)"
                                             title="@(user.Isactive == true ? "Lock account" : "Unlock account")">
+
                                             <i class="bi @(user.Isactive == true ? "bi-lock" : "bi-unlock")"></i>
                                             @(user.Isactive == true ? "Lock" : "Unlock")
                                         </button>
+
+
                                     </form>
                                 </td>
+
                             </tr>
                         }
                     </tbody>
@@ -149,7 +157,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="post" asp-page-handler="AddUser">
+                <form id="addUserForm" method="post" asp-page-handler="AddUser">
                     <div class="mb-3">
                         <label class="form-label">User Name</label>
                         <input type="text" class="form-control" name="NewUser.Username" required>
@@ -181,3 +189,108 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleUserActive(userId, btnElem) {
+        const isLockAction = btnElem.innerText.includes("Lock");
+
+        if (!confirm(isLockAction
+            ? "Are you sure you want to lock this account?"
+            : "Are you sure you want to unlock this account?")) {
+            return;
+        }
+
+        fetch('/Admin/UserManagement?handler=ToggleActive', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': getAntiForgeryToken()
+            },
+            body: 'id=' + encodeURIComponent(userId)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    showToast(data.message || 'Error!', 'error');
+                    return;
+                }
+
+                const row = btnElem.closest('tr');
+                const statusCell = row.querySelector('td:nth-child(4) span');
+
+                if (data.newStatus === true) {
+                    // ACTIVE → dùng badge tùy biến
+                    statusCell.className = 'badge badge-active';
+                    statusCell.textContent = 'Active';
+
+                    btnElem.className = 'btn btn-sm btn-outline-lock';
+                    btnElem.innerHTML = '<i class="bi bi-lock"></i> Lock';
+                    btnElem.title = 'Lock account';
+                } else {
+                    // INACTIVE
+                    statusCell.className = 'badge badge-inactive';
+                    statusCell.textContent = 'Inactive';
+
+                    btnElem.className = 'btn btn-sm btn-outline-unlock';
+                    btnElem.innerHTML = '<i class="bi bi-unlock"></i> Unlock';
+                    btnElem.title = 'Unlock account';
+                }
+
+                showToast(data.message || 'Account status updated.', 'success');
+            })
+            .catch(() => {
+                showToast('Server error!', 'error');
+            });
+    }
+
+
+    // Hàm lấy AntiForgeryToken của Razor Pages
+    function getAntiForgeryToken() {
+        const el = document.querySelector('input[name="__RequestVerificationToken"]');
+        return el ? el.value : '';
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const addUserForm = document.getElementById('addUserForm');
+        if (addUserForm) {
+            addUserForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Lấy dữ liệu từ form
+                const formData = new FormData(addUserForm);
+
+                // Nếu dùng AntiForgeryToken, append vào formData
+                const tokenEl = addUserForm.querySelector('input[name="__RequestVerificationToken"]');
+                if (tokenEl) formData.append('__RequestVerificationToken', tokenEl.value);
+
+                fetch('/Admin/UserManagement?handler=AddUser', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast(data.message || 'Add user successful.', 'success');
+
+                            // Đóng modal
+                            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addUserModal'));
+                            modal.hide();
+
+                            // Reset form
+                            addUserForm.reset();
+
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1300);
+
+                        } else {
+                            showToast(data.message || 'Add user failed!', 'error');
+                        }
+                    })
+                    .catch(() => {
+                        showToast('Server error!', 'error');
+                    });
+            });
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

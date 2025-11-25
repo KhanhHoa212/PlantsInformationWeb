@@ -22,43 +22,43 @@
 
                     <!-- Plant Filters -->
                     <div class="row mb-3">
-                    <form method="get" class="row mb-3">
-                        <div class="col-md-4">
-                            <input type="text" name="search" id="plantSearch" value="@Request.Query["search"]" class="form-control" placeholder="Plant disease..." />
-                        </div>
-                        <div class="col-md-3">
-                            @{
-                                var selectedCategoryId = Request.Query["categoryId"].ToString();
-                            }
-                            <select class="form-select" id="plantCategoryFilter" name="categoryId">
-                                @* Option All Categories*@
-                                @if (string.IsNullOrEmpty(selectedCategoryId))
-                                {
-                                    <option value="" selected>All Categories</option>
+                        <form method="get" class="row mb-3">
+                            <div class="col-md-4">
+                                <input type="text" name="search" id="plantSearch" value="@Request.Query["search"]" class="form-control" placeholder="Plant disease..." />
+                            </div>
+                            <div class="col-md-3">
+                                @{
+                                    var selectedCategoryId = Request.Query["categoryId"].ToString();
                                 }
-                                else
-                                {
-                                    <option value="">All Categories</option>
-                                }
-                                @* Các loại cây *@
-                                @foreach (var category in Model.CategoriesWithCount)
-                                {
-                                    if (selectedCategoryId == category.CategoryId.ToString())
+                                <select class="form-select" id="plantCategoryFilter" name="categoryId">
+                                    @* Option All Categories*@
+                                    @if (string.IsNullOrEmpty(selectedCategoryId))
                                     {
-                                        <option value="@category.CategoryId" selected>@category.CategoryName</option>
+                                        <option value="" selected>All Categories</option>
                                     }
                                     else
                                     {
-                                        <option value="@category.CategoryId">@category.CategoryName</option>
+                                        <option value="">All Categories</option>
                                     }
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-success">Search</button>
-                        </div>
-                    </form>
-                </div>
+                                    @* Các loại cây *@
+                                    @foreach (var category in Model.CategoriesWithCount)
+                                    {
+                                        if (selectedCategoryId == category.CategoryId.ToString())
+                                        {
+                                            <option value="@category.CategoryId" selected>@category.CategoryName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-success">Search</button>
+                            </div>
+                        </form>
+                    </div>
 
                     <!-- Plants Table -->
                     <div class="card shadow-sm">
