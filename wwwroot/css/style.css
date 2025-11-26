@@ -384,35 +384,7 @@ body {
   margin-bottom: 1rem !important;
 }
 
-/* Footer */
-footer {
-  background-color: #212529 !important;
-  color: #ffffff !important;
-}
 
-footer h5 {
-  color: #ffffff !important;
-}
-
-footer p,
-footer li,
-footer a {
-  color: #adb5bd !important;
-}
-
-footer a:hover {
-  color: var(--primary-green) !important;
-}
-
-footer .social-links a {
-  font-size: 1.2rem;
-  transition: color 0.3s ease;
-  color: #adb5bd !important;
-}
-
-footer .social-links a:hover {
-  color: var(--primary-green) !important;
-}
 
 /* Breadcrumb and other potential issues */
 .breadcrumb-item a {

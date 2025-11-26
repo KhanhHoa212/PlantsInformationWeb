@@ -16,12 +16,13 @@ namespace PlantsInformationWeb.Services
         private readonly IGenericRepository<Chatsession> _chatSessionRepo;
         private readonly IGenericRepository<User> _userRepo;
         private readonly IGenericRepository<Unrecognizedplant> _unPlant;
+        private readonly IPlantRepository _plantRepository;
 
         private readonly IMapper _mapper;
         private readonly AIService _aiService;
 
 
-        public ChatService(IGenericRepository<User> userRepo, IGenericRepository<Unrecognizedplant> unPlant, AIService aIService, IMapper mapper, IGenericRepository<Chatmessage> messageRepo, IGenericRepository<Chatsession> sessionRepo)
+        public ChatService(IGenericRepository<User> userRepo,IPlantRepository plantRepository, IGenericRepository<Unrecognizedplant> unPlant, AIService aIService, IMapper mapper, IGenericRepository<Chatmessage> messageRepo, IGenericRepository<Chatsession> sessionRepo)
         {
             _chatMessageRepo = messageRepo;
             _chatSessionRepo = sessionRepo;
@@ -29,6 +30,7 @@ namespace PlantsInformationWeb.Services
             _userRepo = userRepo;
             _aiService = aIService;
             _unPlant = unPlant;
+            _plantRepository = plantRepository;
 
         }
 
@@ -106,15 +108,26 @@ namespace PlantsInformationWeb.Services
             };
             await AddMessageAsync(userMsg);
 
+            // 2. Kiểm tra xem người dùng nhắc đến cây nào chưa có trong DB
             var unknownPlants = await _aiService.CheckIsExitedPlantAsync(userMessage);
 
             if (unknownPlants != null && unknownPlants.Count > 0)
             {
+                // 2a. Lấy danh sách tất cả cây trong bảng Plants
+                var allPlantNames = (await _plantRepository.GetAllPlantsWithDetailsAsync())
+                                    .Select(p => p.PlantName)
+                                    .ToList();
+
+                // 2b. Lấy danh sách tất cả cây đã log trong Unrecognizedplant
                 var loggedPlants = await _unPlant.GetAllAsync();
 
                 foreach (var name in unknownPlants)
                 {
-                    if (!loggedPlants.Any(up => up.Plantname.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                    bool existsInPlants = allPlantNames.Any(p => p.Equals(name, StringComparison.OrdinalIgnoreCase));
+                    bool existsInUnPlants = loggedPlants.Any(up => up.Plantname.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+                    // Chỉ thêm nếu chưa có trong cả 2 bảng
+                    if (!existsInPlants && !existsInUnPlants)
                     {
                         var entry = new Unrecognizedplant
                         {
