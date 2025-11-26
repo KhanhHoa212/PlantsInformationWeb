@@ -1,4 +1,4 @@
-// Dashboard Charts Initialization with Mock Data
+// Dashboard Charts Initialization
 function generateColors(n) {
   // Tạo màu dựa trên HSL, đảm bảo đa dạng và hài hòa
   const colors = [];
@@ -257,7 +257,7 @@ function generateColors(n) {
               });
             });
         }
-        // Export pdf
+        // Export pdf file
         $("#exportPlantAdditionPdf").on("click", function () {
           let startDate = $("#startDate").val();
           let endDate = $("#endDate").val();
