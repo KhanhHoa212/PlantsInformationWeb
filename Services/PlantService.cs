@@ -33,7 +33,6 @@ public class PlantService
         _regionRepo = regionRepo;
         _logger = logger;
         _plantViewLog = plantViewLogRepo;
-        // _aiService = aIService;
         _unrecogRepo = unrecognized;
     }
 
@@ -92,8 +91,6 @@ public class PlantService
                     IsPrimary = false
                 }).ToList();
         }
-
-
         await _plantRepo.AddAsync(plant);
     }
 
