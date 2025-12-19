@@ -666,3 +666,237 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 </script>
+
+
+
+
+@* Single Add/Edit Plant Modal *@
+<div class="modal fade" id="plantModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content wizard-card">
+      <div class="wizard-header">
+        <h2 id="plantModalTitle" class="wizard-title">Add New Plant</h2>
+        <p id="plantModalSubtitle" class="wizard-subtitle">Complete the form in 4 easy steps</p>
+      </div>
+
+      <div class="progress-steps">
+        <div class="step active" data-step="1">
+          <div class="step-circle">1</div><div class="step-label">Basic Info</div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="step-circle">2</div><div class="step-label">Environment</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-circle">3</div><div class="step-label">Health</div>
+        </div>
+        <div class="step" data-step="4">
+          <div class="step-circle">4</div><div class="step-label">Images & Review</div>
+        </div>
+      </div>
+
+      <div class="wizard-content">
+        <form id="plantForm" method="post" enctype="multipart/form-data">
+          @* Hidden: PlantId will be added dynamically when editing *@
+
+          <!-- STEP 1 -->
+          <div class="step-content active" data-step="1">
+            <div class="step-header">
+              <h3 class="step-title">Basic Plant Information</h3>
+              <p class="step-description">Enter the fundamental details about the plant</p>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Plant Name *</label>
+                  <input type="text" class="form-control-modern" name="PlantName" required placeholder="e.g., Rose">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Scientific Name *</label>
+                  <input type="text" class="form-control-modern" name="ScientificName" required placeholder="e.g., Rosa rubiginosa">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Category *</label>
+                  <select class="form-select-modern" name="CategoryId" required>
+                    <option value="">Select Category</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                      <option value="@cat.CategoryId">@cat.CategoryName</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Climate *</label>
+                  <select class="form-select-modern" name="ClimateId" required>
+                    <option value="">Select Climate</option>
+                    @foreach (var cli in Model.Climates)
+                    {
+                      <option value="@cli.ClimateId">@cli.ClimateName</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Growth Cycle *</label>
+                  <select class="form-select-modern" name="GrowthCycle" required>
+                    <option value="">Select Growth Cycle</option>
+                    <option value="annual">Annual (1 year)</option>
+                    <option value="biennial">Biennial (2 years)</option>
+                    <option value="perennial">Perennial (Multiple years)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Origin *</label>
+                  <input type="text" class="form-control-modern" name="Origin" required placeholder="e.g., Southeast Asia">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Description</label>
+                  <textarea class="form-control-modern w-100" name="Description" rows="3" placeholder="Brief description about the plant"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step-content" data-step="2">
+            <div class="step-header">
+              <h3 class="step-title">Growth & Environment</h3>
+              <p class="step-description">Select suitable soil types and regions for this plant</p>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Soil Types</label>
+                  <div class="checkbox-group">
+                    <div class="checkbox-search">
+                      <input type="text" placeholder="Search soil types..." id="soilSearch">
+                    </div>
+                    <div id="soilList">
+                      @foreach (var soil in Model.SoilTypes)
+                      {
+                        var inputId = $"soil-{soil.SoilId}";
+                        <div class="checkbox-item">
+                          <input type="checkbox" name="SoilTypeIds" value="@soil.SoilId" id="@inputId" />
+                          <label for="@inputId">@soil.SoilName</label>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">Regions</label>
+                  <div class="checkbox-group">
+                    <div class="checkbox-search">
+                      <input type="text" placeholder="Search regions..." id="regionSearch">
+                    </div>
+                    <div id="regionList">
+                      @foreach (var region in Model.Regions)
+                      {
+                        var inputId = $"region-{region.RegionId}";
+                        <div class="checkbox-item">
+                          <input type="checkbox" name="RegionIds" value="@region.RegionId" id="@inputId" />
+                          <label for="@inputId">@region.RegionName</label>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step-content" data-step="3">
+            <div class="step-header">
+              <h3 class="step-title">Plant Health & Diseases</h3>
+              <p class="step-description">Select common diseases and health issues for this plant</p>
+            </div>
+
+            <div class="form-group-modern">
+              <label class="form-label-modern">Common Diseases</label>
+              <div class="checkbox-group">
+                <div class="checkbox-search">
+                  <input type="text" placeholder="Search diseases..." id="diseaseSearch">
+                </div>
+                <div id="diseaseList">
+                  @foreach (var disease in Model.Diseases)
+                  {
+                    var inputId = $"disease-{disease.DiseaseId}";
+                    <div class="checkbox-item">
+                      <input type="checkbox" name="DiseaseIds" value="@disease.DiseaseId" id="@inputId" />
+                      <label for="@inputId">@disease.DiseaseName</label>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="step-content" data-step="4">
+            <div class="step-header">
+              <h3 class="step-title">Images & Final Review</h3>
+              <p class="step-description">Upload plant images and review all information</p>
+            </div>
+
+            <div class="form-group-modern">
+              <label class="form-label-modern">Plant Images</label>
+              <div class="image-upload-area" id="imageUploadArea">
+                <div class="upload-icon"><i class="bi bi-cloud-upload"></i></div>
+                <div class="upload-text">Drag & drop images here or click to browse</div>
+                <div class="upload-subtext">Supports: JPG, PNG, WebP (Max 5MB each)</div>
+                <input type="file" id="imageInput" name="images" multiple accept="image/*">
+              </div>
+              <div id="imagePreview" class="mt-3 imagePreview"></div>
+            </div>
+
+            <div class="review-section">
+              <h4 class="review-title">Review Plant Information</h4>
+              <div id="reviewContent">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-navigation">
+            <button type="button" class="btn-wizard btn-wizard-secondary prevBtn" style="display: none;">
+              <i class="bi bi-arrow-left me-2"></i>Previous
+            </button>
+
+            <div class="ms-auto d-flex gap-2">
+              <button type="button" class="btn-wizard btn-wizard-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn-wizard btn-wizard-primary nextBtn">Next<i class="bi bi-arrow-right ms-2"></i></button>
+              <button type="submit" class="btn-wizard btn-wizard-primary submitBtn" style="display:none;">Submit</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+

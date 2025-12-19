@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj": {}
+    "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj": {}
   },
   "projects": {
-    "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj": {
+    "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
+        "projectUniqueName": "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
         "projectName": "PlantsInformationWeb",
-        "projectPath": "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
+        "projectPath": "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\PlantsInformationWeb.csproj",
         "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\obj\\",
+        "outputPath": "C:\\Users\\ASUS\\OneDrive\\Máy tính\\Workspace\\Theory\\Fall2025\\PLantsInformationWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

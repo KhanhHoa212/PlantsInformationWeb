@@ -1,0 +1,186 @@
+/* ===============================
+   ADMIN TABLE STYLE
+   =============================== */
+
+/* Wrap card */
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Table container */
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* GENERAL TABLE STYLE */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+}
+
+/* HEADER */
+.table thead th {
+    background: linear-gradient(90deg, #4e73df, #2f57d0);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 12px 15px;
+    border: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table thead th:hover {
+    background: #2e59d9;
+    cursor: pointer;
+}
+
+/* BODY ROWS */
+.table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+/* CELLS */
+.table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    color: #4a4a4a;
+    border-top: 1px solid #e7e7e7;
+}
+
+/* DESCRIPTION / TEXT-LONG */
+.table td span {
+    display: block;
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* BUTTONS IN TABLE */
+.table .btn-outline-primary,
+.table .btn-outline-danger {
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+
+.table .btn-outline-primary:hover {
+    background: #4e73df;
+    color: white;
+}
+
+.table .btn-outline-danger:hover {
+    background: #e74a3b;
+    color: white;
+}
+
+/* ACTION COLUMN */
+.table td:last-child {
+    white-space: nowrap;
+}
+
+/* PAGINATION (optional improvement) */
+.pagination .page-link {
+    border-radius: 8px;
+    color: #4e73df;
+}
+
+.pagination .page-item.active .page-link {
+    background: #4e73df;
+    color: white;
+    border-color: #4e73df;
+}
+
+/* =============================
+   BADGE STYLES
+   ============================= */
+.badge {
+    display: inline-block;
+    padding: 8px 8px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* STATUS COLORS */
+.badge-active {
+    background: rgba(76, 175, 80, 0.15);
+    color: #2e7d32;
+}
+
+.badge-inactive {
+    background: rgba(244, 67, 54, 0.15);
+    color: #c62828;
+}
+
+.badge-pending {
+    background: rgba(255, 193, 7, 0.18);
+    color: #ff8f00;
+}
+
+/* ROLE COLORS */
+.badge-admin {
+    background: rgba(33, 150, 243, 0.15);
+    color: #1565c0;
+}
+
+.badge-user {
+    background: rgba(156, 39, 176, 0.15);
+    color: #6a1b9a;
+}
+
+.badge-guest {
+    background: rgba(96, 125, 139, 0.2);
+    color: #455a64;
+}
+
+/* =============================
+   PLANT THEME BUTTONS - BEAUTIFUL VERSION
+   ============================= */
+
+/* LOCK BUTTON (soft earth brown) */
+.btn-outline-lock {
+    border: 1px solid #8D6E63;
+    color: #6D4C41;
+    background: rgba(141, 110, 99, 0.12);
+    transition: 0.25s;
+    border-radius: 6px;
+}
+
+.btn-outline-lock:hover {
+    background: #6D4C41;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(109, 76, 65, 0.4);
+}
+
+/* UNLOCK BUTTON (fresh leaf green) */
+.btn-outline-unlock {
+    border: 1px solid #4CAF50;
+    color: #2E7D32;
+    background: rgba(76, 175, 80, 0.12);
+    transition: 0.25s;
+    border-radius: 6px;
+}
+
+.btn-outline-unlock:hover {
+    background: #2E7D32;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(46, 125, 50, 0.4);
+}
+
+.text-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

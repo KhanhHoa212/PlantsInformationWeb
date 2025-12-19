@@ -30,7 +30,6 @@ builder.Services.AddDbContext<PlantsInformationContext>(options =>
 
 
 
-
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPlantRepository, PlantRepository>();
@@ -78,6 +77,32 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+    var adminEmail = "admin123@gmail.com";
+    var adminUsername = "admin";
+
+    var existingByEmail = await userRepository.GetByEmailAsync(adminEmail);
+
+    if (existingByEmail == null)
+    {
+        var adminUser = new User
+        {
+            Username = adminUsername,
+            Email = adminEmail,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Role = "admin",
+            Isactive = true,
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified)
+        };
+
+        await userRepository.AddUserAsync(adminUser);
+    }
+}
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
