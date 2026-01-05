@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - Plant Information Lookup Admin</title>
 
-    <!-- Bootstrap & các thư viện khác -->
+    <!-- Bootstrap & Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@@eonasdan/tempus-dominus@6.7.7/dist/css/tempus-dominus.min.css"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="~/css/admin-style.css" rel="stylesheet">
+    <link href="~/css/admin-table.css" rel="stylesheet">
 
     @if (TempData["NotificationMessage"] != null)
     {
@@ -22,40 +26,60 @@
 </head>
 
 <body>
-    <!-- Top Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-        <div class="container-fluid">
-            <!-- Logo and Brand -->
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-flower1 text-success me-2 fs-4"></i>
-                <span class="fw-bold text-success">Plant Lookup Admin</span>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <!-- Brand Section -->
+            <a class="navbar-brand" href="/">
+                <div class="brand-wrapper">
+                    <div class="brand-icon">
+                        <i class="bi bi-flower1"></i>
+                    </div>
+                    <div class="brand-text">
+                        <div class="brand-title">Plant Lookup</div>
+                        <div class="brand-subtitle">Admin</div>
+                    </div>
+                </div>
             </a>
 
-            <!-- Sidebar Toggle -->
-            <button class="btn btn-outline-success d-lg-none" type="button" id="sidebarToggle">
+            <!-- Sidebar Toggle (Mobile) -->
+            <button class="navbar-toggler d-lg-none" type="button" id="sidebarToggle" aria-label="Toggle sidebar">
                 <i class="bi bi-list"></i>
             </button>
 
             <!-- Navigation Links -->
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                        data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle me-2"></i>
-                        <span>Admin User</span>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <!-- User Dropdown -->
+                <div class="dropdown">
+                    <a class="user-dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <span class="user-name d-none d-sm-inline">Admin User</span>
+                        <i class="bi bi-chevron-down"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" asp-page="/Index"><i class="bi bi-house me-2"></i>Main Site</a>
+                    <ul class="dropdown-menu user-dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">
+                            <div class="dropdown-user-info">
+                                <strong>Admin User</strong>
+                                <br>
+                                <small>Administrator</small>
+                            </div>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><a class="dropdown-item" asp-page="/Index"><i class="bi bi-house"></i> Main Site</a></li>
                         <li>
-                            <form asp-page="/Account/Logout" method="post" style="display: inline;">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form asp-page="/Account/Logout" method="get" style="display: inline;">
                                 <button type="submit" class="dropdown-item text-danger"
-                                    style="border: none; background: none;">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    style="border: none; background: none; width: 100%; text-align: left;">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
                                 </button>
                             </form>
                         </li>
@@ -65,101 +89,135 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-lg-2 d-lg-block sidebar collapse" id="sidebar">
-                <div class="position-sticky pt-3">
+    <!-- Admin Wrapper -->
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-nav">
                     <ul class="nav flex-column">
+                        <!-- Dashboard -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Dashboard") ? "active" : "")"
                                 asp-page="/Admin/Dashboard" data-section="dashboard">
-                                <i class="bi bi-speedometer2 me-2"></i>
-                                Dashboard
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Dashboard</span>
                             </a>
                         </li>
+
+                        <!-- Home -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Index") ? "active" : "")"
                                 asp-page="/Index" id="homeLink">
-                                <i class="bi bi-house me-2"></i>
-                                Home
+                                <i class="bi bi-house"></i>
+                                <span>Home</span>
                             </a>
                         </li>
+
+                        <!-- Divider -->
+                        <div class="nav-divider">
+                            <span>Management</span>
+                        </div>
+
+                        <!-- User Management -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/UserManagement") ? "active" : "")"
                                 asp-page="/Admin/UserManagement" data-section="users">
-                                <i class="bi bi-people me-2"></i>
-                                User Management
+                                <i class="bi bi-people"></i>
+                                <span>User Management</span>
                             </a>
                         </li>
+
+                        <!-- Plant Management -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/PlantManagement") ? "active" : "")"
                                 asp-page="/Admin/PlantManagement" data-section="plants">
-                                <i class="bi bi-flower2 me-2"></i>
-                                Plant Management
+                                <i class="bi bi-flower2"></i>
+                                <span>Plant Management</span>
                             </a>
                         </li>
+
+                        <!-- Plant Categories -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/PlantCategoriesManagement") ? "active" : "")"
                                 asp-page="/Admin/PlantCategoriesManagement" data-section="categories">
-                                <i class="bi bi-tags me-2"></i>
-                                Plant Categories
+                                <i class="bi bi-tags"></i>
+                                <span>Plant Categories</span>
                             </a>
                         </li>
+
+                        <!-- Soil Types -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/SoilManagement") ? "active" : "")"
                                 asp-page="/Admin/SoilManagement" data-section="soil">
-                                <i class="bi bi-tags me-2"></i>
-                                Soil Types
+                                <i class="bi bi-layers"></i>
+                                <span>Soil Types</span>
                             </a>
                         </li>
+
+                        <!-- Regions -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/RegionManagement") ? "active" : "")"
                                 asp-page="/Admin/RegionManagement" data-section="regions">
-                                <i class="bi bi-globe2 me-2"></i>
-                                Regions
+                                <i class="bi bi-globe2"></i>
+                                <span>Regions</span>
                             </a>
                         </li>
+
+                        <!-- Climates -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/ClimateManagement") ? "active" : "")"
                                 asp-page="/Admin/ClimateManagement" data-section="climates">
-                                <i class="bi bi-brightness-high me-2"></i>
-                                Climates
+                                <i class="bi bi-brightness-high"></i>
+                                <span>Climates</span>
                             </a>
                         </li>
+
+                        <!-- Plant Diseases -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/DiseasesManagement") ? "active" : "")"
                                 asp-page="/Admin/DiseasesManagement" data-section="diseases">
-                                <i class="bi bi-tags me-2"></i>
-                                Plant Diseases
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <span>Plant Diseases</span>
                             </a>
                         </li>
+
+                        <!-- Divider -->
+                        <div class="nav-divider">
+                            <span>Analytics</span>
+                        </div>
+
+                        <!-- Reports & Export -->
                         <li class="nav-item">
                             <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/ReportsSection") ? "active" : "")"
                                 asp-page="/Admin/ReportsSection" data-section="reports">
-                                <i class="bi bi-graph-up me-2"></i>
-                                Reports & Export
+                                <i class="bi bi-graph-up"></i>
+                                <span>Reports & Export</span>
                             </a>
                         </li>
                     </ul>
                 </div>
-            </nav>
-            <!-- Main Content -->
-            <main class="col-lg-10 ms-sm-auto px-md-4 main-content">
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
                 @RenderBody()
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/admin-script.js"></script>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Tempus Dominus JS -->
     <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@eonasdan/tempus-dominus@6.7.7/dist/js/tempus-dominus.min.js"></script>
-    <!-- Custom JS -->
-    <script src="~/js/admin-script.js"></script>
+    
+
+
 </body>
 
 </html>

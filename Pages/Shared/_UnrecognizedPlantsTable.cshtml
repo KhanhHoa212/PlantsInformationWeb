@@ -1,0 +1,46 @@
+@model PlantsInformationWeb.Utils.PaginatedList<PlantsInformationWeb.DTOs.UnrecognizedplantDto>
+
+<table class="table activity-table" id="unrecognizedPlantsTable">
+    <thead>
+        <tr>
+            <th><i class="bi bi-flower1 me-2"></i>Plant Name</th>
+            <th><i class="bi bi-clock me-2"></i>User Message</th>
+            <th><i class="bi bi-clock me-2"></i>Suggested At</th>
+            <th><i class="bi bi-plus-circle me-2"></i>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var plant in Model)
+            {
+                <tr>
+                    <td>@plant.Plantname</td>
+                    <td>@plant.Usermessage</td>
+                    <td>@plant.Createdat?.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <a asp-page="/Admin/PlantManagement" asp-route-showAddModal="true"
+                            asp-route-plantName="@plant.Plantname" class="btn btn-success btn-sm">
+                            Add to DB
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger"
+                            onclick="handleUnrecognizedPlant(@plant.UnrecognizedId, '@plant.Plantname')" title="Delete">
+                            <i class="bi bi-trash"> Delete</i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">Không có dữ liệu</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@await Html.PartialAsync("_Pagination", Model, new ViewDataDictionary(ViewData) {
+{ "RouteName", "/Admin/Dashboard" },
+{ "HandlerName", "UnrecognizedPlantsTable" },
+{ "ContainerId", "#unrecognizedPlantsTableContainer" }
+})

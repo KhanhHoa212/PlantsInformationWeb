@@ -77,6 +77,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
